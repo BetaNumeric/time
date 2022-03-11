@@ -27,7 +27,7 @@ var maskImage;
 var prefixS = [];
 var prefixL = [];
 
-var prefixIndex=4, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
+var prefixIndex=0, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
 var Unit, wholeNumber;
 var nowAxis;
 var delay;
@@ -52,7 +52,7 @@ var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
-var stopTime=true;
+var stopTime=false;
 var showSeconds=true;
 var mouseWasDragged=false;
 
