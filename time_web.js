@@ -1589,17 +1589,6 @@ function windowResized() {
   print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
   resizeCanvas(pW, pH);
-  centerCanvas();
   imageW=height/5;
   nowAxis=width/2;
-}
-
-function centerCanvas() {
-  var x = (windowWidth - width) / 2;
-  var y = (windowHeight - height) / 2;
-  //cnv.position(x, y, "static");
-  //cnv.position(x, y, "fixed");
-  //cnv.position(x, y, "relative");
-  cnv.position(x, y, "sticky");
-  //cnv.position(x, y, "initial");
 }
