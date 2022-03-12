@@ -64,6 +64,8 @@ var cnv;
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
+  print(document.getElementById("program").offsetWidth);
+  print(document.getElementById("program").offsetHeight);
   cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
   windowResized();
   nowAxis=width/2;
