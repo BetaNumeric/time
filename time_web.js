@@ -59,12 +59,11 @@ var mouseWasDragged=false;
 var sketchWidth=1280, sketchHeight=720;
 var sketchWidth=900, sketchHeight=512;
 
-var cnv;
 
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
-  cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
+  let cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
   cnv.parent("program");
   windowResized();
   nowAxis=width/2;
@@ -169,7 +168,7 @@ function loadFiles() {
         }
       }
       if (url!=="") {
-        imgList[i][j] = loadImage("data/"+url);
+        imgList[i][j] = loadImage(url);
         //resizedImgList[i][j] = loadImage("data/"+url);
       }
     }
