@@ -27,7 +27,7 @@ var maskImage;
 var prefixS = [];
 var prefixL = [];
 
-var prefixIndex=0, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
+var prefixIndex=4, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
 var Unit, wholeNumber;
 var nowAxis;
 var delay;
@@ -52,19 +52,21 @@ var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
-var stopTime=false;
+var stopTime=true;
 var showSeconds=true;
 var mouseWasDragged=false;
 
 var sketchWidth=1280, sketchHeight=720;
 var sketchWidth=900, sketchHeight=512;
 
-
+var cnv;
 
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
-  createCanvas(windowWidth, windowHeight-1);
+  cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
+  cnv.parent("program");
+  centerCanvas();
   nowAxis=width/2;
   imageW=height/5;
   if (imageW<=0) {
@@ -1418,12 +1420,6 @@ function powerOf(n) {
   //return i ;
 }
 
-function windowResized() {
-  print("windowResized");
-  resizeCanvas(windowWidth, windowHeight-1);
-
-  imageW=height/5;
-}
 
 function updateImgSize() {
   print("updateImgSize");
@@ -1475,49 +1471,52 @@ function mouseReleased() {
   }
 }
 function mouseWheel(event) {
-  scrollValue += event.delta*(scrollValue/1000);
+  if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
+    scrollValue += event.delta*(scrollValue/1000);
+  }
 }
 
 function mouseDragged() {
-  //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
-  let bufferZone=150, speed=bufferZone;
-  mouseWasDragged=true;
-  if (mouseButton==CENTER || (mouseIsPressed && nowSelected && abs(dragStart)<nowW/2)) {
-    if (nowAxis+mouseX-pmouseX>=0 && nowAxis+mouseX-pmouseX<=width) {
-      nowAxis = mouseX-dragStart;
-    }
-  } else {
-    if (mouseButton==LEFT && !nowSelected && abs(dragStart)>nowLineW/2) {
-      let imgSel=false, imgSelID=-1;
-      for (let i=0; i<imgSelected.length; i++) {
-        if (imgSelected[i]) {
-          imgSel=true;
-          imgSelID=i;
-        }
+  if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
+    //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
+    let bufferZone=150, speed=bufferZone;
+    mouseWasDragged=true;
+    if (mouseButton==CENTER || (mouseIsPressed && nowSelected && abs(dragStart)<nowW/2)) {
+      if (nowAxis+mouseX-pmouseX>=0 && nowAxis+mouseX-pmouseX<=width) {
+        nowAxis = mouseX-dragStart;
       }
-      if (imgSel) {
-        movibleX[imgSelID] += (mouseX-pmouseX)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
-        //movibleX[imgSelID] += (mouseX-imgDragStart)/2;
-      } else {
-        if (dragStart>0) {
-          if (mouseX>nowAxis+bufferZone) {
-            scrollValue-=(mouseX-pmouseX)*(scrollValue/(mouseX-nowAxis));
-          } else {
-            scrollValue-=(mouseX-pmouseX)*(scrollValue/speed);
+    } else {
+      if (mouseButton==LEFT && !nowSelected && abs(dragStart)>nowLineW/2) {
+        let imgSel=false, imgSelID=-1;
+        for (let i=0; i<imgSelected.length; i++) {
+          if (imgSelected[i]) {
+            imgSel=true;
+            imgSelID=i;
           }
         }
-        if (dragStart<0) {
-          if (mouseX<nowAxis-bufferZone) {
-            scrollValue-=(mouseX-pmouseX)*(scrollValue/(mouseX-nowAxis));
-          } else {
-            scrollValue+=(mouseX-pmouseX)*(scrollValue/speed);
+        if (imgSel) {
+          movibleX[imgSelID] += (mouseX-pmouseX)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
+          //movibleX[imgSelID] += (mouseX-imgDragStart)/2;
+        } else {
+          if (dragStart>0) {
+            if (mouseX>nowAxis+bufferZone) {
+              scrollValue-=(mouseX-pmouseX)*(scrollValue/(mouseX-nowAxis));
+            } else {
+              scrollValue-=(mouseX-pmouseX)*(scrollValue/speed);
+            }
+          }
+          if (dragStart<0) {
+            if (mouseX<nowAxis-bufferZone) {
+              scrollValue-=(mouseX-pmouseX)*(scrollValue/(mouseX-nowAxis));
+            } else {
+              scrollValue+=(mouseX-pmouseX)*(scrollValue/speed);
+            }
           }
         }
       }
     }
   }
 }
-
 
 function keyPressed() {
   if (key=='1') {
@@ -1580,4 +1579,19 @@ function keyPressed() {
   if (keyCode==DOWN_ARROW) {
     //movibleX-=10;
   }
+}
+
+
+function windowResized() {
+  print("windowResized");
+  resizeCanvas(windowWidth*2/3, windowHeight*2/3);
+  centerCanvas();
+  imageW=height/5;
+  nowAxis=width/2;
+}
+
+function centerCanvas() {
+  var x = (windowWidth - width) / 2;
+  var y = (windowHeight - height) / 2;
+  cnv.position(x, y);
 }
