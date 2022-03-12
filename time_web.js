@@ -1518,64 +1518,64 @@ function mouseDragged() {
 }
 
 function keyPressed() {
-  if (key=='1') {
+  if (key==='1') {
     prefixIndex=1;
   }
-  if (key=='2') {
+  if (key==='2') {
     prefixIndex=2;
   }
-  if (key=='3') {
+  if (key==='3') {
     prefixIndex=3;
   }
-  if (key=='4') {
+  if (key==='4') {
     prefixIndex=4;
   }
-  if (key=='5') {
+  if (key==='5') {
     prefixIndex=5;
   }
-  if (key=='6') {
+  if (key==='6') {
     prefixIndex=6;
   }
-  if (key=='7') {
+  if (key==='7') {
     prefixIndex=7;
   }
-  if (key=='8') {
+  if (key==='8') {
     prefixIndex=8;
   }
-  if (key=='9') {
+  if (key==='9') {
     prefixIndex=11;
   }
-  if (key=='0') {
+  if (key==='0') {
     prefixIndex=-0;
   }
-  if (key=='ü') {
+  if (key==='ü') {
     prefixIndex--;
   }
-  if (key=='.') {
+  if (key==='.') {
     prefixIndex++;
   }
-  if (key=='+') {
+  if (key==='+') {
     scrollValue-=(scrollValue/50);
   }
-  if (key=='-') {
+  if (key==='-') {
     scrollValue+=(scrollValue/50);
   }
-  if (key==' ') {
+  if (key===' ') {
     nowAxis=width/2;
   }
-  if (key=='r') {
+  if (key==='r') {
     record=!record;
   }
-  if (key=='s') {
+  if (key==='s') {
     showSeconds=!showSeconds;
   }
-  if (keyCode==ENTER) {
+  if (keyCode===ENTER) {
     stopTime=!stopTime;
   }
-  if (keyCode==UP_ARROW) {
+  if (keyCode===UP_ARROW) {
     //movibleX+=10;
   }
-  if (keyCode==DOWN_ARROW) {
+  if (keyCode===DOWN_ARROW) {
     //movibleX-=10;
   }
 }
