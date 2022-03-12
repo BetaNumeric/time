@@ -65,6 +65,7 @@ function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
   cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
+  cnv.parent("program");
   windowResized();
   nowAxis=width/2;
   imageW=height/5;
@@ -1582,10 +1583,12 @@ function keyPressed() {
 
 
 function windowResized() {
-  print("width: "+document.getElementById("program").offsetWidth);
-  print("height: "+document.getElementById("program").offsetHeight);
-  resizeCanvas(windowWidth*2/3, windowHeight*2/3);
-  cnv.parent("program");
+  var pW=document.getElementById("program").offsetWidth;
+  var pH=document.getElementById("program").clientHeight;
+  print("width: "+pW+"  WindowW: "+width);
+  print("height: "+pH+"  WindowH: "+height);
+  //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
+  resizeCanvas(pW, pH);
   centerCanvas();
   imageW=height/5;
   nowAxis=width/2;
