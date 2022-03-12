@@ -65,8 +65,7 @@ function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
   cnv = createCanvas(windowWidth*2/3, windowHeight*2/3);
-  cnv.parent("program");
-  centerCanvas();
+  windowResized();
   nowAxis=width/2;
   imageW=height/5;
   if (imageW<=0) {
@@ -1583,8 +1582,8 @@ function keyPressed() {
 
 
 function windowResized() {
-  print("windowResized");
   resizeCanvas(windowWidth*2/3, windowHeight*2/3);
+  cnv.parent("program");
   centerCanvas();
   imageW=height/5;
   nowAxis=width/2;
@@ -1593,5 +1592,9 @@ function windowResized() {
 function centerCanvas() {
   var x = (windowWidth - width) / 2;
   var y = (windowHeight - height) / 2;
-  cnv.position(x, y);
+  //cnv.position(x, y, "static");
+  //cnv.position(x, y, "fixed");
+  //cnv.position(x, y, "relative");
+  cnv.position(x, y, "sticky");
+  //cnv.position(x, y, "initial");
 }
