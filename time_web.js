@@ -61,7 +61,7 @@ var sketchWidth=900, sketchHeight=512;
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
-  let cnv = createCanvas(windowWidth, windowHeight*2/3);
+  let cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("program");
   windowResized();
   nowAxis=width/2;
@@ -1595,7 +1595,10 @@ function keyPressed() {
 
 function windowResized() {
   var pW=document.getElementById("program").offsetWidth;
-  var pH=document.getElementById("program").clientHeight;
+  var pH=document.getElementById("program").offsetHeight;
+
+  pW = document.body.clientWidth;
+  pH = windowHeight*2/3;
   print("width: "+pW+"  WindowW: "+width);
   print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
