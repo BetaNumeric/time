@@ -53,7 +53,7 @@ var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
 var stopTime=true;
-var showSeconds=true;
+var showSeconds=false;
 var mouseWasDragged=false;
 
 var sketchWidth=1280, sketchHeight=720;
