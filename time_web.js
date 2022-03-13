@@ -713,7 +713,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     h=h1;
     x=end;
     y=y1;
-    c.setAlpha(42);
+    //c.setAlpha(42);
     fill(c);
     stroke(255);
     strokeWeight(1);
