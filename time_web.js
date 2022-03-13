@@ -53,7 +53,7 @@ var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
 var stopTime=true;
-var showSeconds=false;
+var showSeconds=true;
 var mouseWasDragged=false;
 
 var sketchWidth=1280, sketchHeight=720;
@@ -1566,7 +1566,7 @@ function keyPressed() {
   if (key==='r') {
     record=!record;
   }
-  if (key==="s" || key==="S") {
+  if (key==="s") {
     showSeconds=!showSeconds;
   }
   if (keyCode===ENTER) {
