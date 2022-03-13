@@ -369,7 +369,7 @@ function draw() {
    
    */
 
-  text(imgSelected, mouseX, height/2);
+  //text(imgSelected, mouseX, height/2);
 }
 
 
@@ -1598,7 +1598,7 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  pH = windowHeight*2/3;
+  pH = windowHeight*3/4;
   print("width: "+pW+"  WindowW: "+width);
   print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
