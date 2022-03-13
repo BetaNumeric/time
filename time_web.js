@@ -697,6 +697,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   if (mode==2 && end>0) {
     //for geologic time scale (eon,era,period,epoch) at the top of the window
     let offset=0;
+    let col=color(c);
     if (order==1) {
       offset=height/16;
     }
@@ -713,8 +714,8 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     h=h1;
     x=end;
     y=y1;
-    //c.setAlpha(42);
-    fill(c);
+    col.setAlpha(42);
+    fill(col);
     stroke(255);
     strokeWeight(1);
     textSize(textS);
