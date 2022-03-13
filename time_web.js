@@ -1567,10 +1567,10 @@ function keyPressed() {
     record=!record;
   }
   if (key==='s') {
-    showSeconds=!showSeconds;
+    stopTime=!stopTime;
   }
   if (keyCode===ENTER) {
-    stopTime=!stopTime;
+    showSeconds=!showSeconds;
   }
   if (keyCode===UP_ARROW) {
     //movibleX+=10;
