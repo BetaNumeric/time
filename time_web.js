@@ -53,7 +53,7 @@ var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
 var stopTime=true;
-var showSeconds=false;
+var showSeconds=true;
 var mouseWasDragged=false;
 
 var sketchWidth=1280, sketchHeight=720;
@@ -194,9 +194,9 @@ function draw() {
   fill(255);
 
   if (mouseIsPressed) {
-    cursor('grabbing');  //CROSS
+    cursor('CROSS');  //CROSS  grabbing
   } else {
-    cursor('grab');  //MOVE
+    cursor('MOVE');  //MOVE  grab
   }
   if (nowSelected) {
   }
@@ -776,7 +776,7 @@ function Axis() {
   if (mouseX<nowAxis+nowLineW/2+nowW/8 && mouseX>nowAxis-nowLineW/2-nowW/8 && !nowSelected) {
     delay++;
     if (delay>20 ) {
-      cursor('pointer');
+      cursor('HAND');  //HAND  pointer
       if ( nowLineW<maxTableNameLength+50 && mouseIsPressed===false) {
         nowLineW += 6;
       }
@@ -846,7 +846,7 @@ function Axis() {
 
   strokeWeight(lineW);
   if (nowSelected && mouseWasDragged===false) {
-    cursor('pointer');
+    cursor('HAND');  //HAND  pointer
     strokeWeight(lineW+2);
     fill(55);
   }
