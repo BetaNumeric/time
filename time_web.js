@@ -50,7 +50,7 @@ var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
-var stopTime=false;
+var stopTime=true;
 var showSeconds=true;
 var mouseWasDragged=false;
 
@@ -192,12 +192,12 @@ function draw() {
   fill(255);
 
   if (mouseIsPressed) {
-    //cursor('ARROW');  //CROSS  grabbing
+    cursor('grabbing');  //CROSS  grabbing
   } else {
-    //cursor('MOVE');  //MOVE  grab
+    cursor('grab');  //MOVE  grab
   }
   if (nowSelected) {
-    cursor('HAND');  //HAND  pointer
+    cursor('pointer');  //HAND  pointer
   }
 
 
@@ -697,7 +697,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   if (mode==2 && end>0) {
     //for geologic time scale (eon,era,period,epoch) at the top of the window
     let offset=0;
-    let col=color(c);
     if (order==1) {
       offset=height/16;
     }
@@ -714,8 +713,8 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     h=h1;
     x=end;
     y=y1;
-    col.setAlpha(42);
-    fill(col);
+    c.setAlpha(42);
+    fill(c);
     stroke(255);
     strokeWeight(1);
     textSize(textS);
@@ -766,7 +765,7 @@ function Axis() {
   if (nowLineW==0 &&mouseX>nowX-nowW/2+nowXoffset && mouseX<nowX+nowW/2+nowXoffset &&
     mouseY>nowY-nowH/2 && mouseY<nowY+nowH/2 && abs(dragStart)<nowW/2) {
     nowSelected=true;
-    cursor('HAND');  //HAND  pointer
+    cursor('pointer');  //HAND  pointer
   } else {
     if (mouseIsPressed===false) {
       nowSelected=false;
@@ -777,7 +776,7 @@ function Axis() {
   if (mouseX<nowAxis+nowLineW/2+nowW/8 && mouseX>nowAxis-nowLineW/2-nowW/8 && !nowSelected) {
     delay++;
     if (delay>20 ) {
-      cursor('HAND');  //HAND  pointer
+      cursor('pointer');  //HAND  pointer
       if ( nowLineW<maxTableNameLength+50 && mouseIsPressed===false) {
         nowLineW += 6;
       }
@@ -847,7 +846,7 @@ function Axis() {
 
   strokeWeight(lineW);
   if (nowSelected && mouseWasDragged===false) {
-    cursor('HAND');  //HAND  pointer
+    cursor('pointer');  //HAND  pointer
     strokeWeight(lineW+2);
     fill(55);
   }
@@ -1470,8 +1469,6 @@ function mouseReleased() {
   if (selectTable>=0) {
     showTable[selectTable]=!showTable[selectTable];
   }
-
-  cursor('ARROW');
 }
 function mouseWheel(event) {
   if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
@@ -1480,7 +1477,6 @@ function mouseWheel(event) {
 }
 
 function mouseDragged() {
-  cursor('MOVE');
   if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
     //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
     let bufferZone=150, speed=bufferZone;
