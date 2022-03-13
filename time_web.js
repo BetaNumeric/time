@@ -53,7 +53,7 @@ var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
 var stopTime=true;
-var showSeconds=true;
+var showSeconds=false;
 var mouseWasDragged=false;
 
 var sketchWidth=1280, sketchHeight=720;
@@ -63,7 +63,7 @@ var sketchWidth=900, sketchHeight=512;
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
-  let cnv = createCanvas(windowWidth, windowHeight*2/3);
+  let cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("program");
   windowResized();
   nowAxis=width/2;
@@ -1566,7 +1566,7 @@ function keyPressed() {
   if (key==='r') {
     record=!record;
   }
-  if (key==='s') {
+  if (key==="s" || key==="S") {
     showSeconds=!showSeconds;
   }
   if (keyCode===ENTER) {
