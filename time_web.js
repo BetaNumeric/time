@@ -63,7 +63,7 @@ var sketchWidth=900, sketchHeight=512;
 function setup() {
   //noLoop();
   //createCanvas(sketchWidth, sketchHeight);
-  let cnv = createCanvas(windowWidth, windowHeight*2/3);
+  let cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("program");
   windowResized();
   nowAxis=width/2;
