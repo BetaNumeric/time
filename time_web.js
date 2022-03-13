@@ -50,7 +50,7 @@ var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
-var stopTime=true;
+var stopTime=false;
 var showSeconds=true;
 var mouseWasDragged=false;
 
@@ -694,7 +694,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
 
-  if (mode==2 && !showSeconds && end>0) {
+  if (mode==2 && end>0) {
     //for geologic time scale (eon,era,period,epoch) at the top of the window
     let offset=0;
     if (order==1) {
