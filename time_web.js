@@ -18,11 +18,9 @@ var resizedImgList = [];
 
 var movibleX = new Array(tabNum);
 
-
 var imageW;
 var textBox;
 var maskImage;
-
 
 var prefixS = [];
 var prefixL = [];
@@ -194,11 +192,12 @@ function draw() {
   fill(255);
 
   if (mouseIsPressed) {
-    cursor('CROSS');  //CROSS  grabbing
+    //cursor('ARROW');  //CROSS  grabbing
   } else {
-    cursor('MOVE');  //MOVE  grab
+    //cursor('MOVE');  //MOVE  grab
   }
   if (nowSelected) {
+    cursor('HAND');  //HAND  pointer
   }
 
 
@@ -766,6 +765,7 @@ function Axis() {
   if (nowLineW==0 &&mouseX>nowX-nowW/2+nowXoffset && mouseX<nowX+nowW/2+nowXoffset &&
     mouseY>nowY-nowH/2 && mouseY<nowY+nowH/2 && abs(dragStart)<nowW/2) {
     nowSelected=true;
+    cursor('HAND');  //HAND  pointer
   } else {
     if (mouseIsPressed===false) {
       nowSelected=false;
@@ -1453,6 +1453,7 @@ function updateImgSize() {
 
 
 function mousePressed() {
+
   dragStart=mouseX-nowAxis;
   imgDragStart=mouseX;
 }
@@ -1468,6 +1469,8 @@ function mouseReleased() {
   if (selectTable>=0) {
     showTable[selectTable]=!showTable[selectTable];
   }
+
+  cursor('ARROW');
 }
 function mouseWheel(event) {
   if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
@@ -1476,6 +1479,7 @@ function mouseWheel(event) {
 }
 
 function mouseDragged() {
+  cursor('MOVE');
   if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
     //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
     let bufferZone=150, speed=bufferZone;
@@ -1567,10 +1571,10 @@ function keyPressed() {
     record=!record;
   }
   if (key==='s') {
-    stopTime=!stopTime;
+    showSeconds=!showSeconds;
   }
   if (keyCode===ENTER) {
-    showSeconds=!showSeconds;
+    stopTime=!stopTime;
   }
   if (keyCode===UP_ARROW) {
     //movibleX+=10;
