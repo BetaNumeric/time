@@ -200,6 +200,12 @@ function draw() {
     cursor('pointer');  //HAND  pointer
   }
 
+  if (magnitude<7) {
+    showSeconds=true;
+  } else {
+    showSeconds=false;
+  }
+
 
   if (scrollValue>0.1) {
     yearPrefixIndex=prefixIndex-2;
@@ -362,6 +368,8 @@ function draw() {
    //rect(nowAxis-movibleX, height-height/5, imageW, imageW);
    
    */
+
+  text(imgSelected, mouseX, height/2);
 }
 
 
@@ -457,8 +465,11 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
           } else {
             imgSelected[i]=false;
           }
-
-          image(img, mov, imgY, imageW, imageH);
+          if (imgSelected[i]===true) {
+            image(img, mov, imgY, imageW*1.1, imageH*1.1);
+          } else {
+            image(img, mov, imgY, imageW, imageH);
+          }
         }
       }
     }
@@ -694,7 +705,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
 
-  if (mode==2 && end>0) {
+  if (mode==2 && !showSeconds && end>0) {
     //for geologic time scale (eon,era,period,epoch) at the top of the window
     let offset=0;
     if (order==1) {
