@@ -25,7 +25,7 @@ var maskImage;
 var prefixS = [];
 var prefixL = [];
 
-var prefixIndex=4, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
+var prefixIndex=0, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
 var Unit, wholeNumber;
 var nowAxis;
 var delay;
@@ -50,9 +50,11 @@ var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
 var record=false;
-var stopTime=true;
+var stopTime=false;
 var showSeconds=true;
 var mouseWasDragged=false;
+
+var zoom=0;
 
 var sketchWidth=1280, sketchHeight=720;
 var sketchWidth=900, sketchHeight=512;
@@ -86,12 +88,12 @@ function preload() {
   tableName[0]="past earth";
   showTable[0]=true;
   url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
-  movibleX[0] = -10;
+  movibleX[0] = -1.00001;
 
   tableName[1]="future earth";
   showTable[1] = true;
   url[1] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
-  movibleX[1]=10;
+  movibleX[1]=1;
 
   tableName[2]="future";
   showTable[2]=true;
@@ -106,7 +108,7 @@ function preload() {
   showTable[5]=true;
   url[5]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=0&single=true&output=csv";
   tableName[6]="time spans";
-  showTable[6]=true;
+  showTable[6]=false;
   url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
   tableName[7]="waves";
   showTable[7]=true;
@@ -199,8 +201,7 @@ function draw() {
   if (nowSelected) {
     cursor('pointer');  //HAND  pointer
   }
-
-  if (magnitude<7) {
+  if (magnitude<7 || magnitude>19) {
     showSeconds=true;
   } else {
     showSeconds=false;
@@ -370,6 +371,12 @@ function draw() {
    */
 
   //text(imgSelected, mouseX, height/2);
+
+  if (zoom<0) {
+    scrollValue-=(scrollValue/50);
+  } else if (zoom>0) {
+    scrollValue+=(scrollValue/50);
+  }
 }
 
 
@@ -422,16 +429,44 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     end=nowAxis;
   }
 
+
   if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
+    //for image sequences that can be dragged change over the timeline
+
     let imgY=height-h;
     let imageH = imageW*img.height/img.width;
     let maxX = data[i].get(data[i].getRowCount()-1, "time");
     let minX = data[i].get(0, "time");
 
-    //mov = nowAxis-1/(pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
+    if (mov-nowAxis>0) {
+      if (mov-nowAxis<imageW/2) {
+        mov=nowAxis+imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+      if (mov>width-imageW/2) {
+        text(mov, mouseX, mouseY);
+        mov=width-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+    }
+
+    if (mov-nowAxis<0) {
+      if (mov-nowAxis>-imageW/2) {
+        mov=nowAxis-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+      if (mov<imageW/2) {
+        text(mov, mouseX, mouseY);
+        mov=imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+    }
 
     imgMag[i]=mag;
-
     if (movX>maxX) {
       movX=float(maxX)-0.001;
       movibleX[i]=movX;
@@ -442,6 +477,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       movibleX[i] = movX;
       mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-minX)*secInYear;
     }
+
     if (img!=undefined) {
       imageMode(CENTER);
       if (j<=data[i].getRowCount() && j>0) {
@@ -449,16 +485,19 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         stroke(255);
         strokeWeight(1);
 
-        if (abs(mov-nowAxis)<imageW+5) {
-          tint(255, map(abs(mov-nowAxis), imageW+5, 5, 255, 0));
-          stroke(map(abs(mov-nowAxis), imageW+5, 5, 255, 0));
+
+
+
+        if (abs(mov-nowAxis)<imageW/2) {
+          tint(255, map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
+          stroke(map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
         }
+
 
         line(mov, imgY+imageH/2, mov, height);
         noStroke();
 
         if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
-          //text(data[i].get(j, "time")+"×10"+powerOf(mag)+"a", mov, imgY-imageH/2-textS);
           if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
             mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
             imgSelected[i]=true;
@@ -1581,6 +1620,7 @@ function keyPressed() {
   if (key==='s') {
     showSeconds=!showSeconds;
   }
+
   if (keyCode===ENTER) {
     stopTime=!stopTime;
   }
@@ -1589,6 +1629,15 @@ function keyPressed() {
   }
   if (keyCode===DOWN_ARROW) {
     //movibleX-=10;
+  }
+  if (keyCode===LEFT_ARROW) {
+    zoom=-1;
+  }
+  if (keyCode===RIGHT_ARROW) {
+    zoom=1;
+  }
+  if (key==="z") {
+    zoom=0;
   }
 }
 
@@ -1599,6 +1648,7 @@ function windowResized() {
 
   pW = document.body.clientWidth;
   pH = windowHeight*3/4;
+  pH = windowHeight;
   print("width: "+pW+"  WindowW: "+width);
   print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
