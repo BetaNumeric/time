@@ -371,10 +371,10 @@ function draw() {
    */
 
   //text(imgSelected, mouseX, height/2);
-
-  if (zoom<0) {
+  text(dragStart, mouseX, mouseY);
+  if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||  (mouseIsPressed && dragStart<0 && mouseX<=0)) {
     scrollValue-=(scrollValue/50);
-  } else if (zoom>0) {
+  } else if (zoom>0 || (mouseIsPressed && dragStart>0 && mouseX<=0) || (mouseIsPressed && dragStart<0 && mouseX>=width)) {
     scrollValue+=(scrollValue/50);
   }
 }
