@@ -524,7 +524,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   stroke(255);
 
   if (mode!=1) {
-    mode=-1;
+    //mode=-1;
   }
 
   if (u === "ad") {
@@ -1694,9 +1694,9 @@ function mouseReleased() {
 
 function mouseWheel(event) {
   if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
-    scrollValue += event.delta*(scrollValue/1000);
+    //scrollValue += event.delta*(scrollValue/1000);
   }
-  txtClicked=false;
+  //txtClicked=false;
 }
 function mouseDragged() {
   if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
