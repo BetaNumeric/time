@@ -1694,9 +1694,9 @@ function mouseReleased() {
 
 function mouseWheel(event) {
   if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
-    //scrollValue += event.delta*(scrollValue/1000);
+    scrollValue += event.delta*(scrollValue/1000);
   }
-  //txtClicked=false;
+  txtClicked=false;
 }
 function mouseDragged() {
   if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
@@ -1821,8 +1821,8 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  pH = windowHeight*3/4;
-  //pH = windowHeight;
+  //pH = windowHeight*3/4;
+  pH = windowHeight;
   //print("width: "+pW+"  WindowW: "+width);
   //print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
