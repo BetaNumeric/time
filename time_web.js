@@ -116,7 +116,7 @@ function preload() {
   showTable[5]=true;
   url[5]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=0&single=true&output=csv";
   tableName[6]="time spans";
-  showTable[6]=false;
+  showTable[6]=true;
   url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
   tableName[7]="waves";
   showTable[7]=true;
@@ -203,14 +203,19 @@ function draw() {
   background(0);
   fill(255);
 
+
+
   if (mouseIsPressed) {
     cursor('grabbing');  //CROSS  grabbing
   } else {
     cursor('grab');  //MOVE  grab
   }
-  if (nowSelected) {
+
+  if (nowSelected || txtSourceSelected) {
     cursor('pointer');  //HAND  pointer
   }
+
+
   if (magnitude<7 || magnitude>19) {
     showSeconds=true;
   } else {
@@ -237,29 +242,6 @@ function draw() {
   if (milliSecond>=1) {
     milliSecond=0.999;
   }
-
-  if (mouseY<lineH+textS*2||mouseY>height-lineH-textS*2) {
-    strokeWeight(textW);
-    stroke(255);
-    if (mouseY>height-lineH-textS*2 ) {
-      if (magnitude>8 && magnitude<23) {
-        text(nfc(((mouseX-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8)), 0)+"a", mouseX, height/2);
-      } else {
-        text(nfc((mouseX-nowAxis)*scrollValue/skip*3.1556952, 3)+"×10"+powerOf(magnitude-8)+"a", mouseX, height/2);
-      }
-    } else {
-      if (magnitude>0 && magnitude<17) {
-        text(nfc(((mouseX-nowAxis)*scrollValue/skip)*pow(10, magnitude), 0)+"s", mouseX, height/2);
-      } else {
-        text(nfc((mouseX-nowAxis)*scrollValue/skip, 3)+"×10"+powerOf(magnitude)+"s", mouseX, height/2);
-      }
-    }
-    strokeWeight(0.1);
-    line(mouseX, height/2-(secY/textS)*6, mouseX, 0);
-    line(mouseX, height/2+(secY/textS)*6, mouseX, height);
-  }
-
-
 
   seconds();
   if (yearPrefixIndex<1 && yearPrefixIndex>-6) {
@@ -338,7 +320,6 @@ function draw() {
           }
         }
         if (data[i].columns[k] === "img" && data[i].getString(j, "img")!=="") {
-          //print(imgList[i][j]);
           img = createImage(100, 100);
           img = imgList[i][j];
         }
@@ -352,6 +333,7 @@ function draw() {
     }
   }
   Axis();
+  cursorTime();
   textAlign(RIGHT);
   let border=width/4;
   let posToYear= scrollValue/skip*3.1556952*pow(10, magnitude-8);
@@ -370,7 +352,6 @@ function draw() {
   }
 
   if (txtClicked===true) {
-    //text(txtId, mouseX, mouseY);
     rectMode(CORNER);
     textAlign(TOP, TOP);
     textSize(textS);
@@ -395,7 +376,6 @@ function draw() {
     let txtYpos = txtY-txtHeight-textS;
 
 
-    //txtYpos=height/2-txtHeight/2;
     if (txtXpos<0) {
       txtXpos = 0;
     }
@@ -412,8 +392,6 @@ function draw() {
     if (txtBoxScale>100) {
       txtBoxScale=100;
     }
-    //rect(txtXpos, txtYpos, txtWidth+textS, txtHeight+textS, txtR);
-    //rect(txtX-txtW/2, txtY-txtH, txtW, txtH, txtR);
 
     let txtBoxX = map(txtBoxScale, 0, 100, txtX-txtW/2, txtXpos);
     let txtBoxY = map(txtBoxScale, 0, 100, txtY-txtH, txtYpos);
@@ -431,7 +409,6 @@ function draw() {
     if (txtSource!="" && txtBoxScale>=100) {
       textAlign(RIGHT);
       textStyle(ITALIC);
-      //text("🔗", txtXpos+txtWidth, txtYpos+txtHeight-textS/2);
       text("🔗", txtXpos+txtWidth, txtYpos+txtHeight-textS/2);
 
       if (mouseX<txtXpos+txtWidth &&
@@ -454,51 +431,54 @@ function draw() {
     fill(255);
     textAlign(LEFT);
     textStyle(BOLD);
-    //text(n, txtXpos+textS/2, txtYpos+textS/2, txtWidth, txtHeight);
     text(n, txtBoxX+textS/2, txtBoxY+textS/2, txtBoxW, txtBoxH);
     textStyle(NORMAL);
-    //text(txt, txtXpos+textS/2, txtYpos+textS*2/3, txtWidth, txtHeight);
     text(txt, txtBoxX+textS/2, txtBoxY+textS*2/3, txtBoxW, txtBoxH-textS);
   } else {
     txtBoxScale=0;
   }
-  //text(dragStart, mouseX, height/2);
-
-  /*
-  if ((border-nowAxis)*posToYear<movibleX[0]*pow(10, imgMag[0])) {
-   
-   //movibleX[0]=(border-nowAxis)*scrollValue/skip*3.1556952;
-   
-   }
-   
-   //let yearToPos = nowAxis-(1/(scrollValue/skip)*3.1556952)*pow(10, (yearMagnitude)) ;
-   let yearToPos = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-imgMag[0])))*(-2)*31556952;
-   
-   text(nf(movibleX[0], 0, 2)+"    "+nf(movibleX[1], 0, 2)+"   "+nf(frameRate(), 0, 1), width-20, 130);
-   text((border-nowAxis)*posToYear+"    "+posToYear, width-20, 160);
-   
-   stroke(255);
-   strokeWeight(lineW);
-   line(yearToPos, 0, yearToPos, height);
-   
-   //imgMag[0]
-   //text(nfc((mouseX-nowAxis)*scrollValue/skip*3.1556952, 3)+"×10"+powerOf(magnitude-8)+"a", mouseX, height/2);
-   //nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
-   
-   //rect(nowAxis-movibleX, height-height/5, imageW, imageW);
-   
-   */
-
 
   if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||  (mouseIsPressed && dragStart<0 && mouseX<=0)) {
     scrollValue-=(scrollValue/50);
   } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) || (mouseIsPressed && dragStart<0 && mouseX>=width)) {
     scrollValue+=(scrollValue/50);
   }
+  text(nfc(frameRate(), 0), width-20, 20);
 }
 
 
-
+function cursorTime() {
+  if (mouseY<lineH+textS*2 || mouseY>height-lineH-textS*2) {
+    let mouseTime="";
+    if (mouseY>height-lineH-textS*2 ) {
+      if (magnitude>8 && magnitude<23) {
+        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8)), 0)+"a";
+      } else {
+        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip*3.1556952, 3)+"×10"+powerOf(magnitude-8)+"a";
+      }
+    } else {
+      if (magnitude>0 && magnitude<17) {
+        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip)*pow(10, magnitude), 0)+"s";
+      } else {
+        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip, 3)+"×10"+powerOf(magnitude)+"s";
+      }
+    }
+    noStroke();
+    fill(255, 100);
+    textAlign(CENTER);
+    if (mouseX<=textWidth(mouseTime)/2) {
+      text(mouseTime, textWidth(mouseTime)/2, height/2);
+    } else if (mouseX>=width-textWidth(mouseTime)/2) {
+      text(mouseTime, width-textWidth(mouseTime)/2, height/2);
+    } else {
+      text(mouseTime, mouseX, height/2);
+    }
+    stroke(255,100);
+    strokeWeight(1);
+    line(mouseX, height/2-(secY/textS)*6, mouseX, 0);
+    line(mouseX, height/2+(secY/textS)*6, mouseX, height);
+  }
+}
 
 
 
@@ -565,7 +545,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         movibleX[i]=movX;
       }
       if (mov>width-imageW/2) {
-        text(mov, mouseX, mouseY);
         mov=width-imageW/2;
         movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
         movibleX[i]=movX;
@@ -579,7 +558,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         movibleX[i]=movX;
       }
       if (mov<imageW/2) {
-        text(mov, mouseX, mouseY);
         mov=imageW/2;
         movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
         movibleX[i]=movX;
@@ -604,8 +582,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         noTint();
         stroke(255);
         strokeWeight(1);
-
-
 
 
         if (abs(mov-nowAxis)<imageW/2) {
@@ -689,6 +665,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     }
 
 
+
     if (x<r && x>=0) {
       rL=x;
     } else if (x<0) {
@@ -700,34 +677,38 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       rR=0;
     }
 
-    if (x-textWidth(n)/2-textS/2<=0 && x>=0) {
-      x=textWidth(n)/2+textS/2;
+
+    let scale = map(h, h1, height/2, 1, 0);
+    textSize(textS*scale);
+
+
+    if (x-textWidth(n)/2-margin*scale<=0 && x>=0) {
+      x=textWidth(n)/2+margin*scale;
     }
-    if (x>width-textWidth(n)/2-textS/2 && x<=width) {
-      x=width-textWidth(n)/2-textS/2;
+    if (x>width-textWidth(n)/2-margin*scale && x<=width) {
+      x=width-textWidth(n)/2-margin*scale;
     }
 
     if (x<0) {
-      x=x+textWidth(n)/2+textS/2;
+      x=x+textWidth(n)/2+margin*scale;
     }
     if (x>width) {
-      x=x-textWidth(n)/2-textS/2;
+      x=x-textWidth(n)/2-margin*scale;
     }
 
 
-    let scale = map(h, h1, height/2, 1, 0);
 
     if (img==undefined) {
 
-      textSize(textS*scale);
       rectMode(CENTER);
       fill(0);
       if (mouseWasDragged===false && txtClicked===false &&
         mouseX>x-(textWidth(n)+margin*2*scale)/2 &&
         mouseX<x+(textWidth(n)+margin*2*scale)/2 &&
-        mouseY>height-h-((textS+margin*2)*scale)/2 &&
-        mouseY<height-h+((textS+margin*2)*scale)/2) {
+        mouseY>height-h-((textS+margin*2)*scale) &&
+        mouseY<height-h) {
         txtSelected[i][j]=true;
+        cursor("pointer");
       } else {
         txtSelected[i][j]=false;
       }
@@ -736,7 +717,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         fill(55);
         txtX=x;
         txtY=height-h;
-        txtW=(textWidth(n)+margin*2*scale);
+        txtW=textWidth(n)+margin*2*scale;
         txtH=(textS+margin*2)*scale;
         txtR=r*scale;
         //rectMode(CORNER);
@@ -850,7 +831,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
   if (mode==0 && w>0.1) {
     //for the time length of events at the lower half of the top half of the window
-    let h1=height/4, y1=height/2-h1/2;
+    let h1=height/4, y1=height/2;
     let ts=textS, rL=0, rR=0;
     x=width/2;
     if (nowAxis<x-w/2) {
@@ -868,12 +849,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     textAlign(LEFT, CENTER);
 
     if (w<width/2) {
-      y=map(w, width/2, nowW-lineW, y1, y1+(h1-(nowH/2))/2);
-      h=map(w, width/2, nowW-lineW, h1, (nowH/2));
-      if (w<nowW-lineW) {
-        y=map(w, nowW-lineW, 0, y1+(h1-(nowH/2))/2, y1+h1/2);
-        h=map(w, nowW-lineW, 0, (nowH/2), 0);
-      }
+      h=map(w, width/2, nowW-lineW, h1, nowH);
 
       rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
       if (nowAxis<x-w/2+rL) {
@@ -884,17 +860,19 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         rR=x+w/2-nowAxis;
       }
     } else {
-      y=y1;
       h=h1;
       rL=0;
       rR=0;
+      strokeWeight(map(w, width/2, width*5, 1, 0));
     }
 
     if (w>width+textWidth(n)*2+margin*2) {
-      rect(x, y, width+lineW*2, h1);
+      //rect(x, y, width+lineW*2, h1);
+      //rect(x, y1, width+lineW*2, h1);
+      rect(x, y1, width+lineW*2, map(w, width+textWidth(n)*2+margin*2, width*5, h1, height));
     } else {
       //fill(0);
-      rect(x, y, w, h, abs(rL), abs(rR), 0, 0);
+      rect(x, y1, w, h, abs(rL), abs(rR), abs(rR), abs(rL));
 
       fill(255);
       if (w>textWidth(n)+ts) {
@@ -904,7 +882,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       }
       textSize(ts);
       strokeWeight(textW);
-      text(n, x-w/2+ts/2, y-h/2+ts+ts/3);
+      text(n, x-w/2+ts/2, y1-h/2+ts+ts/3);
     }
   }
 
@@ -983,7 +961,6 @@ function Axis() {
   if (nowLineW==0 && mouseX>nowX-nowW/2+nowXoffset && mouseX<nowX+nowW/2+nowXoffset &&
     mouseY>nowY-nowH/2 && mouseY<nowY+nowH/2 && abs(dragStart)<nowW/2) {
     nowSelected=true;
-    cursor('pointer');  //HAND  pointer
   } else {
     if (mouseIsPressed===false) {
       nowSelected=false;
@@ -994,7 +971,6 @@ function Axis() {
   if (txtClicked===false && mouseX<nowAxis+nowLineW/2+nowW/8 && mouseX>nowAxis-nowLineW/2-nowW/8 && !nowSelected) {
     delay++;
     if (delay>20 ) {
-      cursor('pointer');  //HAND  pointer
       if ( nowLineW<maxTableNameLength+50 && mouseIsPressed===false) {
         nowLineW += 6;
       }
@@ -1064,7 +1040,6 @@ function Axis() {
 
   strokeWeight(lineW);
   if (nowSelected && mouseWasDragged===false) {
-    cursor('pointer');  //HAND  pointer
     strokeWeight(lineW+2);
     fill(55);
   }
@@ -1821,8 +1796,8 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  //pH = windowHeight*3/4;
-  pH = windowHeight;
+  pH = windowHeight*3/4;
+  //pH = windowHeight;
   //print("width: "+pW+"  WindowW: "+width);
   //print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
