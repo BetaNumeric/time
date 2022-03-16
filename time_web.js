@@ -46,6 +46,14 @@ var dayOfYear;
 var pSecond=0;
 var pDay=0;
 var nowSelected=false;
+var txtClicked=false;
+var txtX, txtY, txtW, txtH, txtR;
+var txtBoxScale=0;
+var txtSource="";
+var txtSourceSelected=false;
+var txtSelected=[];
+var txtId=[];
+var pTxtId=[];
 var imgSelected=new Array(tabNum);
 var imgMag=new Array(tabNum);
 var imgDragStart=0;
@@ -160,7 +168,9 @@ function loadFiles() {
 
 
   for (let i=0; i<data.length; i++) {
+    txtSelected[i]=[];
     for (let j=0; j<data[i].getRowCount(); j++) {
+      txtSelected[i][j] = false;
       let url="";
       for (let k=0; k<data[i].getColumnCount(); k++) {
         if (data[i].columns[k] === "img") {
@@ -258,9 +268,11 @@ function draw() {
 
   years();
 
-
   noFill();
   stroke(255);
+
+
+
   for (let i=0, c=0; i<data.length; i++) {
     for (let j=0; j<data[i].getRowCount(); j++) {
 
@@ -344,6 +356,113 @@ function draw() {
   let border=width/4;
   let posToYear= scrollValue/skip*3.1556952*pow(10, magnitude-8);
 
+  txtId[0]=-1;
+  txtId[1]=-1;
+  for (let i=0, c=0; i<data.length; i++) {
+    for (let j=0; j<data[i].getRowCount(); j++) {
+      if (txtSelected[i][j]) {
+        txtId[0]=i;
+        txtId[1]=j;
+        pTxtId[0]=txtId[0];
+        pTxtId[1]=txtId[1];
+      }
+    }
+  }
+
+  if (txtClicked===true) {
+    //text(txtId, mouseX, mouseY);
+    rectMode(CORNER);
+    textAlign(TOP, TOP);
+    textSize(textS);
+    let txt="", n="";
+    txtSource="";
+    txtSourceSelected=false;
+    for (let k=0; k<data[pTxtId[0]].getColumnCount(); k++) {
+      if (data[pTxtId[0]].columns[k] === "name") {
+        n = data[pTxtId[0]].getString(pTxtId[1], "name");
+      }
+      if (data[pTxtId[0]].columns[k] === "text") {
+        txt = "\n"+data[pTxtId[0]].getString(pTxtId[1], "text");
+      }
+      if (data[pTxtId[0]].columns[k] === "source") {
+        txtSource = ""+data[pTxtId[0]].getString(pTxtId[1], "source");
+      }
+    }
+
+    let txtWidth = width/4;
+    let txtHeight = (textWidth(txt)/txtWidth)*textLeading()+textLeading()+textS;
+    let txtXpos = txtX-txtWidth/2;
+    let txtYpos = txtY-txtHeight-textS;
+
+
+    //txtYpos=height/2-txtHeight/2;
+    if (txtXpos<0) {
+      txtXpos = 0;
+    }
+    if (txtXpos+txtWidth>width) {
+      txtXpos = width-txtWidth;
+    }
+
+    fill(0);
+    stroke(255);
+    strokeWeight(1);
+    if (txtBoxScale<100) {
+      txtBoxScale+=3;
+    }
+    if (txtBoxScale>100) {
+      txtBoxScale=100;
+    }
+    //rect(txtXpos, txtYpos, txtWidth+textS, txtHeight+textS, txtR);
+    //rect(txtX-txtW/2, txtY-txtH, txtW, txtH, txtR);
+
+    let txtBoxX = map(txtBoxScale, 0, 100, txtX-txtW/2, txtXpos);
+    let txtBoxY = map(txtBoxScale, 0, 100, txtY-txtH, txtYpos);
+    let txtBoxW = map(txtBoxScale, 0, 100, txtW, txtWidth+textS);
+    let txtBoxH = map(txtBoxScale, 0, 100, txtH, txtHeight+textS);
+    let txtBoxR = map(txtBoxScale, 0, 100, txtR, 0);
+
+    rect(txtBoxX, txtBoxY, txtBoxW, txtBoxH, txtBoxR);
+
+
+    noStroke();
+    fill(255);
+
+
+    if (txtSource!="" && txtBoxScale>=100) {
+      textAlign(RIGHT);
+      textStyle(ITALIC);
+      //text("🔗", txtXpos+txtWidth, txtYpos+txtHeight-textS/2);
+      text("🔗", txtXpos+txtWidth, txtYpos+txtHeight-textS/2);
+
+      if (mouseX<txtXpos+txtWidth &&
+        mouseX>txtXpos+txtWidth-textWidth("🔗") &&
+        mouseY<txtYpos+txtHeight-textS/2+textLeading() &&
+        mouseY>txtYpos+txtHeight-textS/2) {
+        txtSourceSelected=true;
+        textAlign(CENTER);
+        fill(255, 100);
+        if (mouseX+5+textWidth(txtSource)>width) {
+          text(txtSource, width-textWidth(txtSource)/2-5, mouseY+textLeading());
+        } else if (mouseX-5-textWidth(txtSource)<0) {
+          text(txtSource, textWidth(txtSource)/2+5, mouseY+textLeading());
+        } else {
+          text(txtSource, mouseX+5, mouseY+textLeading());
+        }
+      }
+    }
+
+    fill(255);
+    textAlign(LEFT);
+    textStyle(BOLD);
+    //text(n, txtXpos+textS/2, txtYpos+textS/2, txtWidth, txtHeight);
+    text(n, txtBoxX+textS/2, txtBoxY+textS/2, txtBoxW, txtBoxH);
+    textStyle(NORMAL);
+    //text(txt, txtXpos+textS/2, txtYpos+textS*2/3, txtWidth, txtHeight);
+    text(txt, txtBoxX+textS/2, txtBoxY+textS*2/3, txtBoxW, txtBoxH-textS);
+  } else {
+    txtBoxScale=0;
+  }
+  //text(dragStart, mouseX, height/2);
 
   /*
   if ((border-nowAxis)*posToYear<movibleX[0]*pow(10, imgMag[0])) {
@@ -352,8 +471,8 @@ function draw() {
    
    }
    
-   //let yearToPos= nowAxis-(1/(scrollValue/skip)*3.1556952)*pow(10, (yearMagnitude)) ;
-   let yearToPos= nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-imgMag[0])))*(-2)*31556952;
+   //let yearToPos = nowAxis-(1/(scrollValue/skip)*3.1556952)*pow(10, (yearMagnitude)) ;
+   let yearToPos = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-imgMag[0])))*(-2)*31556952;
    
    text(nf(movibleX[0], 0, 2)+"    "+nf(movibleX[1], 0, 2)+"   "+nf(frameRate(), 0, 1), width-20, 130);
    text((border-nowAxis)*posToYear+"    "+posToYear, width-20, 160);
@@ -370,14 +489,15 @@ function draw() {
    
    */
 
-  //text(imgSelected, mouseX, height/2);
-  text(dragStart, mouseX, mouseY);
+
   if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||  (mouseIsPressed && dragStart<0 && mouseX<=0)) {
     scrollValue-=(scrollValue/50);
-  } else if (zoom>0 || (mouseIsPressed && dragStart>0 && mouseX<=0) || (mouseIsPressed && dragStart<0 && mouseX>=width)) {
+  } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) || (mouseIsPressed && dragStart<0 && mouseX>=width)) {
     scrollValue+=(scrollValue/50);
   }
 }
+
+
 
 
 
@@ -403,8 +523,8 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   fill(255);
   stroke(255);
 
-  if (mode!=4) {
-    //mode=-1;
+  if (mode!=1) {
+    mode=-1;
   }
 
   if (u === "ad") {
@@ -518,13 +638,12 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     (end>-width*0.25 && start<nowAxis-1))) {
     //for time points and time spans at the bottom half of the window
 
-    let r=10, h1=height/4;
+    let r=10, rL=r, rR=r, h1=height/4;
 
     if (img!=undefined) {
       h1=height/7;
     }
     if (img==undefined && id2%2==0) {
-
       h1=height/4+height/12;
     }
     if (img==undefined && id2%3==0) {
@@ -544,7 +663,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       }
     }
     if (u === "bp") {
-
       if (lx<0) {
         h=map(x, nowAxis-width/5, nowAxis, h1, height/2);
       }
@@ -557,19 +675,45 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       }
     }
 
+
+
     strokeWeight(1);
     noFill();
+
     if (start!=end) {
       rect(x, height-lineH*2, end-start, h, 50);
+      x=start+abs(start-end)/2;
+      line(x, height-lineH*2, x, height-h);
     } else {
       line(x, height, x, height-h);
     }
 
-    x=start+abs(start-end)/2;
 
-    if (start!=end) {
-      line(x, height-lineH*2, x, height-h);
+    if (x<r && x>=0) {
+      rL=x;
+    } else if (x<0) {
+      rL=0;
     }
+    if (x>width-r && x<=width) {
+      rR=width-x;
+    } else if (x>width) {
+      rR=0;
+    }
+
+    if (x-textWidth(n)/2-textS/2<=0 && x>=0) {
+      x=textWidth(n)/2+textS/2;
+    }
+    if (x>width-textWidth(n)/2-textS/2 && x<=width) {
+      x=width-textWidth(n)/2-textS/2;
+    }
+
+    if (x<0) {
+      x=x+textWidth(n)/2+textS/2;
+    }
+    if (x>width) {
+      x=x-textWidth(n)/2-textS/2;
+    }
+
 
     let scale = map(h, h1, height/2, 1, 0);
 
@@ -578,14 +722,38 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       textSize(textS*scale);
       rectMode(CENTER);
       fill(0);
+      if (mouseWasDragged===false && txtClicked===false &&
+        mouseX>x-(textWidth(n)+margin*2*scale)/2 &&
+        mouseX<x+(textWidth(n)+margin*2*scale)/2 &&
+        mouseY>height-h-((textS+margin*2)*scale)/2 &&
+        mouseY<height-h+((textS+margin*2)*scale)/2) {
+        txtSelected[i][j]=true;
+      } else {
+        txtSelected[i][j]=false;
+      }
+
+      if (txtId[0]===i && txtId[1]===j) {
+        fill(55);
+        txtX=x;
+        txtY=height-h;
+        txtW=(textWidth(n)+margin*2*scale);
+        txtH=(textS+margin*2)*scale;
+        txtR=r*scale;
+        //rectMode(CORNER);
+        //rect(x, height-h-(textS+margin*2)*scale/2, 100, -100);
+        //text(t, x, height-h, 150);
+      }
+
       stroke(255);
       strokeWeight(1);
-      rect(x, height-h, (textWidth(n)+margin*2*scale), (textS+margin*2)*scale, r*scale);
+      rect(x, height-h-((textS+margin*2)*scale)/2,
+        (textWidth(n)+margin*2*scale), (textS+margin*2)*scale,
+        rL*scale, rR*scale, rR*scale, rL*scale);
 
       textAlign(CENTER, CENTER);
       noStroke();
       fill(255);
-      text(n, x, height-h);
+      text(n, x, height-h-((textS+margin*2)*scale)/2);
     } else {
       let imageH = imageW*img.height/img.width;
 
@@ -812,7 +980,7 @@ function Axis() {
       maxTableNameLength=textWidth(tableName[i]);
     }
   }
-  if (nowLineW==0 &&mouseX>nowX-nowW/2+nowXoffset && mouseX<nowX+nowW/2+nowXoffset &&
+  if (nowLineW==0 && mouseX>nowX-nowW/2+nowXoffset && mouseX<nowX+nowW/2+nowXoffset &&
     mouseY>nowY-nowH/2 && mouseY<nowY+nowH/2 && abs(dragStart)<nowW/2) {
     nowSelected=true;
     cursor('pointer');  //HAND  pointer
@@ -823,7 +991,7 @@ function Axis() {
   }
 
 
-  if (mouseX<nowAxis+nowLineW/2+nowW/8 && mouseX>nowAxis-nowLineW/2-nowW/8 && !nowSelected) {
+  if (txtClicked===false && mouseX<nowAxis+nowLineW/2+nowW/8 && mouseX>nowAxis-nowLineW/2-nowW/8 && !nowSelected) {
     delay++;
     if (delay>20 ) {
       cursor('pointer');  //HAND  pointer
@@ -1520,12 +1688,16 @@ function mouseReleased() {
     showTable[selectTable]=!showTable[selectTable];
   }
 }
+
+
+
+
 function mouseWheel(event) {
   if (mouseX>0 && mouseX<width && mouseY>0 && mouseY<height) {
     scrollValue += event.delta*(scrollValue/1000);
   }
+  txtClicked=false;
 }
-
 function mouseDragged() {
   if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
     //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
@@ -1566,9 +1738,11 @@ function mouseDragged() {
       }
     }
   }
+  txtClicked=false;
 }
 
 function keyPressed() {
+  txtClicked=false;
   if (key==='1') {
     prefixIndex=1;
   }
@@ -1648,11 +1822,25 @@ function windowResized() {
 
   pW = document.body.clientWidth;
   pH = windowHeight*3/4;
-  pH = windowHeight;
-  print("width: "+pW+"  WindowW: "+width);
-  print("height: "+pH+"  WindowH: "+height);
+  //pH = windowHeight;
+  //print("width: "+pW+"  WindowW: "+width);
+  //print("height: "+pH+"  WindowH: "+height);
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
   resizeCanvas(pW, pH);
   imageW=height/5;
   nowAxis=width/2;
+}
+
+
+function mouseClicked() {
+  if (txtSource!="" && txtSourceSelected && txtClicked) {
+    window.open(txtSource);
+    txtClicked=false;
+    txtSourceSelected=false;
+  }
+  if (txtId[0]>=0) {
+    txtClicked=true;
+  } else {
+    txtClicked=false;
+  }
 }
