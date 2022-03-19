@@ -4,29 +4,18 @@ var data = [];
 var tableName = [];
 var showTable = [];
 var selectTable;
-var nameList = new Array(tabNum);
-var timeList = new Array(tabNum);
-var endList = new Array(tabNum);
-var unitList = new Array(tabNum);
-var magList = new Array(tabNum);
-var modeList = new Array(tabNum);
-var orderList = new Array(tabNum);
-var textList = new Array(tabNum);
-var colorList = new Array(tabNum);
 var imgList = [];
 var resizedImgList = [];
 
-var movibleX = new Array(tabNum);
+var movibleX = [];
 
 var imageW;
-var textBox;
-var maskImage;
 
 var prefixS = [];
 var prefixL = [];
 
 var prefixIndex=0, yearPrefixIndex=prefixIndex-3, magnitude=0, yearMagnitude=0;
-var Unit, wholeNumber;
+
 var nowAxis;
 var delay;
 var skip=1, ySkip=1;
@@ -38,13 +27,11 @@ var lineW=2;
 var textW=0;
 var scrollValue=0.1;
 var oneSec;
-var tScroll=0;
-var milliSecond=0, pmilliSecond=milliSecond;
+var milliSecond=0, pmilliSecond=0;
 var thisYear;
 var oneYear;
 var dayOfYear;
 var pSecond=0;
-var pDay=0;
 var nowSelected=false;
 var txtClicked=false;
 var txtX, txtY, txtW, txtH, txtR;
@@ -54,23 +41,16 @@ var txtSourceSelected=false;
 var txtSelected=[];
 var txtId=[];
 var pTxtId=[];
-var imgSelected=new Array(tabNum);
-var imgMag=new Array(tabNum);
+var imgSelected=[];
+var imgMag=[];
 var imgDragStart=0;
-var record=false;
 var stopTime=false;
 var showSeconds=true;
 var mouseWasDragged=false;
 
 var zoom=0;
 
-var sketchWidth=1280, sketchHeight=720;
-var sketchWidth=900, sketchHeight=512;
-
-
 function setup() {
-  //noLoop();
-  //createCanvas(sketchWidth, sketchHeight);
   let cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("program");
   windowResized();
@@ -84,19 +64,14 @@ function setup() {
 
 
 function preload() {
-  for (let i=0; i<tabNum; i++) {
-    imgSelected[i]=false;
-    imgMag[i]=0;
-    movibleX[i]=0.1;
-  }
+  //loads tables from url and defines 2d arrays
+  // Google Sheets: "https://docs.google.com/spreadsheets/d/1CMoU4tmcJLsw5-4aX-zFGTrj4klCg5fMoHkJ6RnwvZE/edit?usp=sharing"
 
-  let url = new Array(tabNum);
-  //tableName[0]="test";  showTable[0]=true;
-  //url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vRY2RbAHHHFvXeGDo2Tzwly5olAvI0FtGA0tR7wSswQCNR-_ktftqjfptwDRl4spnhLagUuRU3iZxuh/pub?gid=1083787111&single=true&output=csv";
+  let url = [];
   tableName[0]="past earth";
   showTable[0]=true;
   url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
-  movibleX[0] = -1.00001;
+  movibleX[0] = -1.0000000001;
 
   tableName[1]="future earth";
   showTable[1] = true;
@@ -122,40 +97,20 @@ function preload() {
   showTable[7]=true;
   url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=844114706&single=true&output=csv";
 
-
-
-
-
-  /*
-tableName[0]="geologic_time";
-   url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSCkxvFvon4MFpljqKyw6NWciCqgW4Q9J-PuCEJY56i6Jzy1Y5uw4vpLY9hSULGriUv4sHFymtHmTFN/pub?gid=1083787111&single=true&output=csv";
-   tableName[1]="timespans";
-   url[1]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSAnMss3Pg-2t4b4HQniJR7f_IEbmIMNDiAw5eD8Vds-xzC5RiEa0c7rbVlVEq6_qKfgNch6j2PJyRy/pub?gid=689944470&single=true&output=csv";
-   tableName[2]="waves";
-   url[2]="https://docs.google.com/spreadsheets/d/e/2PACX-1vTHyIKk-FMY3XqenqDJYpR8uO-JQqVd0xkXorcSJHgsrhbNedcZdcPEKMrgbjCxhx-wRz1w45XJvFY0/pub?gid=729459883&single=true&output=csv";
-   tableName[3]="future";
-   url[3]="https://docs.google.com/spreadsheets/d/e/2PACX-1vTRCRND0FVxFWch6TmhjvCdm-AhGrbJfywhE0yfMVkG8vZGoGgLlHpabx-4mlBWMTu66vLHWe-hBbeu/pub?gid=1933524719&single=true&output=csv";
-   tableName[4]="inventions";
-   url[4]="https://docs.google.com/spreadsheets/d/e/2PACX-1vQIz2m6UIMz5DeO8-abM3hnKXOYXvgJcX8NXvA6vyPEt8f--NgH-u-1mnkGMCSGlJaqqVj5b5UaL2Vv/pub?gid=290891940&single=true&output=csv";
-   tableName[5]="continental_drift";
-   url[5]="https://docs.google.com/spreadsheets/d/e/2PACX-1vRQIM5tYmSUbglSwE5U1cHZ7El1ogtETfUsCMITKbQllIDZaF5uxhYQigPuzjQ9NhWg6KShCBuahGXO/pub?gid=730104933&single=true&output=csv";
-   tableName[6]="life";
-   url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vTOqF-SeFSGc6C7YjwjfkXE2oNDbiEurhhF8iiGwYOKxZBvNVuZnOaYf5fTVrFOWnjAqPeo5EZJ9Z9H/pub?gid=1233932843&single=true&output=csv";
-   
-   */
-
-  textBox=createGraphics(100, 100);
-  maskImage=createGraphics(100, 100);
-
   for (let i=0; i<url.length; i++) {
     data[i] = loadTable(url[i], 'csv', 'header');
     imgList[i] = [];
+    imgSelected[i]=false;
+    imgMag[i]=0;
     resizedImgList[i] = [];
+    movibleX[i]=0.1;
   }
 }
 
 
 function loadFiles() {
+  //loads images in list
+
   for (let i=0; i<1; i++) {
     prefixS[i] = [];
     prefixL[i] = [];
@@ -179,7 +134,6 @@ function loadFiles() {
       }
       if (url!=="") {
         imgList[i][j] = loadImage(url);
-        //resizedImgList[i][j] = loadImage("data/"+url);
       }
     }
   }
@@ -188,7 +142,6 @@ function loadFiles() {
 function draw() {
   //noLoop();
   textS=15+height/200;
-  //textS=15;
   textSize(textS);
   secY=height/10;
   yearY=height/10;
@@ -232,9 +185,12 @@ function draw() {
 
   dayOfYear = calDayOfYear(day(), month(), year());
 
+  seconds();
+
   if (milliSecond+1/frameRate()<1) {
     milliSecond+=1/frameRate();
   }
+
   if (second() != pSecond) {
     milliSecond=0;
     pSecond=second();
@@ -243,7 +199,6 @@ function draw() {
     milliSecond=0.999;
   }
 
-  seconds();
   if (yearPrefixIndex<1 && yearPrefixIndex>-6) {
     timeScroll();
   }
@@ -255,83 +210,91 @@ function draw() {
 
 
 
-  for (let i=0, c=0; i<data.length; i++) {
-    for (let j=0; j<data[i].getRowCount(); j++) {
+  for (let m=0; m<=4; m++) {
+    for (let i=0, c=0; i<data.length; i++) {
+      for (let j=0; j<data[i].getRowCount(); j++) {
 
-      let name, time, end, unit, mag, mode, order, text, col, img;
+        let name, time, end, unit, mag, mode, order, text, col, img;
 
-      for (let k=0; k<data[i].getColumnCount(); k++) {
-        if (data[i].columns[k] === "name") {
-          name = data[i].getString(j, "name");
-        }
-
-        if (data[i].columns[k] === "time") {
-          if (data[i].getString(j, "time")==="now") {
-            time = -0.12345;
-          } else {
-            time = data[i].get(j, "time");
+        for (let k=0; k<data[i].getColumnCount(); k++) {
+          if (data[i].columns[k] === "name") {
+            name = data[i].getString(j, "name");
           }
-        }
 
-        if (data[i].columns[k] === "end") {
-          if (data[i].getString(j, "end")==="") {
-            end = data[i].get(j, "time");
-          } else if (data[i].getString(j, "end")==="now") {
-            end = -0.12345;
-          } else {
-            end = data[i].get(j, "end");
-          }
-        }
-
-        if (data[i].columns[k] === "unit") {
-          unit = data[i].getString(j, "unit");
-        }
-        if (data[i].columns[k] === "mag") {
-          mag = data[i].get(j, "mag");
-        }
-        if (data[i].columns[k] === "mode") {
-          mode = data[i].get(j, "mode");
-        }
-        if (data[i].columns[k] === "order") {
-          order = data[i].get(j, "order");
-        }
-        if (data[i].columns[k] === "text") {
-          text = data[i].getString(j, "text");
-        }
-        if (data[i].columns[k] === "color") {
-
-          if (data[i].getString(j, "color") !== "") {
-
-            let fromIndex1 = data[i].getString(j, "color").indexOf("/"),
-              fromIndex2 = data[i].getString(j, "color").indexOf("/", fromIndex1+1),
-              r=0, g=0, b=0;
-
-            if (data[i].getString(j, "color").length>0) {
-              r=int(data[i].getString(j, "color").substring(0, data[i].getString(j, "color").length));
-              g=r;
-              b=r;
+          if (data[i].columns[k] === "time") {
+            if (data[i].getString(j, "time")==="now") {
+              time = -0.12345;
+            } else {
+              time = data[i].get(j, "time");
             }
-            if (fromIndex1>0) {
-              r=int(data[i].getString(j, "color").substring(0, fromIndex1));
-              g=int(data[i].getString(j, "color").substring(fromIndex1+1, fromIndex2));
-              b=int(data[i].getString(j, "color").substring(fromIndex2+1, data[i].getString(j, "color").length));
+          }
+
+          if (data[i].columns[k] === "end") {
+            if (data[i].getString(j, "end")==="") {
+              end = data[i].get(j, "time");
+            } else if (data[i].getString(j, "end")==="now") {
+              end = -0.12345;
+            } else {
+              end = data[i].get(j, "end");
             }
-            col = color(r, g, b);
+          }
+
+          if (data[i].columns[k] === "unit") {
+            unit = data[i].getString(j, "unit");
+          }
+          if (data[i].columns[k] === "mag") {
+            mag = data[i].get(j, "mag");
+          }
+          if (data[i].columns[k] === "mode") {
+            mode = data[i].get(j, "mode");
+          }
+          if (data[i].columns[k] === "order") {
+            order = data[i].get(j, "order");
+          }
+          if (data[i].columns[k] === "text") {
+            text = data[i].getString(j, "text");
+          }
+          if (data[i].columns[k] === "color") {
+
+            if (data[i].getString(j, "color") !== "") {
+
+              let fromIndex1 = data[i].getString(j, "color").indexOf("/"),
+                fromIndex2 = data[i].getString(j, "color").indexOf("/", fromIndex1+1),
+                r=0, g=0, b=0;
+
+              if (data[i].getString(j, "color").length>0) {
+                r=int(data[i].getString(j, "color").substring(0, data[i].getString(j, "color").length));
+                g=r;
+                b=r;
+              }
+              if (fromIndex1>0) {
+                r=int(data[i].getString(j, "color").substring(0, fromIndex1));
+                g=int(data[i].getString(j, "color").substring(fromIndex1+1, fromIndex2));
+                b=int(data[i].getString(j, "color").substring(fromIndex2+1, data[i].getString(j, "color").length));
+              }
+              col = color(r, g, b);
+            }
+          }
+          if (data[i].columns[k] === "img" && data[i].getString(j, "img")!=="") {
+            img = createImage(100, 100);
+            img = imgList[i][j];
           }
         }
-        if (data[i].columns[k] === "img" && data[i].getString(j, "img")!=="") {
-          img = createImage(100, 100);
-          img = imgList[i][j];
+        if (showTable[i] && m==mode) {
+          dataVis(i, j, c, name, time, end, unit, mag, mode, order, text, col, img);
         }
-      }
-      if (showTable[i]) {
-        dataVis(i, j, c, name, time, end, unit, mag, mode, order, text, col, img);
-      }
-      if (mode == 1) {
-        c++;
+        if (mode == 1) {
+          c++;
+        }
       }
     }
   }
+
+
+
+
+
+
   Axis();
   cursorTime();
   textAlign(RIGHT);
@@ -340,14 +303,16 @@ function draw() {
 
   txtId[0]=-1;
   txtId[1]=-1;
+
   for (let i=0, c=0; i<data.length; i++) {
     for (let j=0; j<data[i].getRowCount(); j++) {
-      if (txtSelected[i][j]) {
+      if (txtSelected[i][j]===true) {
         txtId[0]=i;
         txtId[1]=j;
         pTxtId[0]=txtId[0];
         pTxtId[1]=txtId[1];
       }
+      txtSelected[i][j]=false;
     }
   }
 
@@ -355,43 +320,110 @@ function draw() {
     rectMode(CORNER);
     textAlign(TOP, TOP);
     textSize(textS);
-    let txt="", n="";
+    let txt="", n="", timeTxt="", t, e, mag=0, unit;
     txtSource="";
     txtSourceSelected=false;
+
     for (let k=0; k<data[pTxtId[0]].getColumnCount(); k++) {
+      if (data[pTxtId[0]].columns[k] === "mag") {
+        mag = data[pTxtId[0]].get(pTxtId[1], "mag");
+      }
+      if (data[pTxtId[0]].columns[k] === "time") {
+        t = data[pTxtId[0]].get(pTxtId[1], "time");
+      }
+
+      if (data[pTxtId[0]].columns[k] === "end") {
+        if (data[pTxtId[0]].get(pTxtId[1], "end")==="") {
+          e = data[pTxtId[0]].get(pTxtId[1], "time");
+        } else if (data[pTxtId[0]].getString(pTxtId[1], "end")==="now") {
+          e = -0.12345;
+        } else {
+          e = data[pTxtId[0]].get(pTxtId[1], "end");
+        }
+      }
+
+
+      if (data[pTxtId[0]].columns[k] === "unit") {
+        unit = data[pTxtId[0]].getString(pTxtId[1], "unit");
+      }
+
       if (data[pTxtId[0]].columns[k] === "name") {
         n = data[pTxtId[0]].getString(pTxtId[1], "name");
+        //+"  "+data[pTxtId[0]].getString(pTxtId[1], "time")+"*×10"+powerOf(data[pTxtId[0]].getString(pTxtId[1], "mag"))+"a";
       }
       if (data[pTxtId[0]].columns[k] === "text") {
-        txt = "\n"+data[pTxtId[0]].getString(pTxtId[1], "text");
+        txt = "\n"+data[pTxtId[0]].getString(pTxtId[1], "text")+"\n";
       }
       if (data[pTxtId[0]].columns[k] === "source") {
         txtSource = ""+data[pTxtId[0]].getString(pTxtId[1], "source");
       }
     }
 
+
+
+    if (unit==="bp") {
+      if (e!=t) {
+        if (t<0) {
+          timeTxt = "("+nfc(t*pow(10, mag))+" - "+nfc(e*pow(10, mag))+" years ago)";
+        } else {
+          timeTxt = "("+nfc(t*pow(10, mag))+" - "+nfc(e*pow(10, mag))+" years)";
+        }
+      } else {
+        if (t<0) {
+          timeTxt = "("+nfc(t*pow(10, mag))+" years ago)";
+        } else {
+          timeTxt = "(in "+nfc(t*pow(10, mag))+" years)";
+        }
+      }
+    }
+
+    if (unit==="ad") {
+      if (e!=t) {
+        if (t<0) {
+          timeTxt = "("+abs(t)+" - "+abs(e)+" BC)";
+        } else {
+          timeTxt = "("+t+" - "+e+" AD)";
+        }
+      } else {
+
+        if (t<0) {
+          timeTxt = "("+abs(t)+" BC)";
+        } else {
+          timeTxt = "("+t+" AD)";
+        }
+      }
+    }
+
+
+
+
     let txtWidth = width/4;
+    if (textWidth(n+ "  "+timeTxt)+textS>width/4 || textWidth(txt)<width/4) {
+      txtWidth = textWidth(n+ "  "+timeTxt)+textS*2;
+    }
+
     let txtHeight = (textWidth(txt)/txtWidth)*textLeading()+textLeading()+textS;
     let txtXpos = txtX-txtWidth/2;
     let txtYpos = txtY-txtHeight-textS;
 
 
-    if (txtXpos<0) {
-      txtXpos = 0;
-    }
-    if (txtXpos+txtWidth>width) {
-      txtXpos = width-txtWidth;
-    }
-
     fill(0);
     stroke(255);
     strokeWeight(1);
+
     if (txtBoxScale<100) {
-      txtBoxScale+=3;
+      txtBoxScale+=15;
     }
     if (txtBoxScale>100) {
       txtBoxScale=100;
     }
+    if (txtXpos+txtWidth>width) {
+      txtXpos = width-txtWidth;
+    }
+    if (txtXpos<0) {
+      txtXpos = 0;
+    }
+
 
     let txtBoxX = map(txtBoxScale, 0, 100, txtX-txtW/2, txtXpos);
     let txtBoxY = map(txtBoxScale, 0, 100, txtY-txtH, txtYpos);
@@ -409,7 +441,7 @@ function draw() {
     if (txtSource!="" && txtBoxScale>=100) {
       textAlign(RIGHT);
       textStyle(ITALIC);
-      text("🔗", txtXpos+txtWidth, txtYpos+txtHeight-textS/2);
+      text("🔗", txtXpos+txtWidth-textS/2, txtYpos+txtHeight-textS/2);
 
       if (mouseX<txtXpos+txtWidth &&
         mouseX>txtXpos+txtWidth-textWidth("🔗") &&
@@ -432,51 +464,32 @@ function draw() {
     textAlign(LEFT);
     textStyle(BOLD);
     text(n, txtBoxX+textS/2, txtBoxY+textS/2, txtBoxW, txtBoxH);
+
+    fill(255, 127);
+    textAlign(RIGHT);
     textStyle(NORMAL);
+    text(timeTxt, txtBoxX-textS/2, txtBoxY+textS/2, txtBoxW, txtBoxH);
+
+    fill(255);
+    textAlign(LEFT);
     text(txt, txtBoxX+textS/2, txtBoxY+textS*2/3, txtBoxW, txtBoxH-textS);
   } else {
     txtBoxScale=0;
   }
 
-  if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||  (mouseIsPressed && dragStart<0 && mouseX<=0)) {
+  if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||
+    (mouseIsPressed && dragStart<0 && mouseX<=0)) {
     scrollValue-=(scrollValue/50);
-  } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) || (mouseIsPressed && dragStart<0 && mouseX>=width)) {
+  } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) ||
+    (mouseIsPressed && dragStart<0 && mouseX>=width)) {
     scrollValue+=(scrollValue/50);
   }
-  text(nfc(frameRate(), 0), width-20, 20);
-}
-
-
-function cursorTime() {
-  if (mouseY<lineH+textS*2 || mouseY>height-lineH-textS*2) {
-    let mouseTime="";
-    if (mouseY>height-lineH-textS*2 ) {
-      if (magnitude>8 && magnitude<23) {
-        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8)), 0)+"a";
-      } else {
-        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip*3.1556952, 3)+"×10"+powerOf(magnitude-8)+"a";
-      }
-    } else {
-      if (magnitude>0 && magnitude<17) {
-        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip)*pow(10, magnitude), 0)+"s";
-      } else {
-        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip, 3)+"×10"+powerOf(magnitude)+"s";
-      }
-    }
+  if (true) {
+    textSize(12);
+    textAlign(RIGHT);
+    fill(255, 127);
     noStroke();
-    fill(255, 100);
-    textAlign(CENTER);
-    if (mouseX<=textWidth(mouseTime)/2) {
-      text(mouseTime, textWidth(mouseTime)/2, height/2);
-    } else if (mouseX>=width-textWidth(mouseTime)/2) {
-      text(mouseTime, width-textWidth(mouseTime)/2, height/2);
-    } else {
-      text(mouseTime, mouseX, height/2);
-    }
-    stroke(255,100);
-    strokeWeight(1);
-    line(mouseX, height/2-(secY/textS)*6, mouseX, 0);
-    line(mouseX, height/2+(secY/textS)*6, mouseX, height);
+    text(nfc(frameRate(), 0), width-6, 10);
   }
 }
 
@@ -493,8 +506,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     movX = movibleX[i],
     mov = movX,
     h=height/5, x=nowAxis, y=height/2-h/2;
-
-  //movX = movibleX*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
 
 
   textSize(textS);
@@ -530,88 +541,65 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
 
-  if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
-    //for image sequences that can be dragged change over the timeline
-
-    let imgY=height-h;
-    let imageH = imageW*img.height/img.width;
-    let maxX = data[i].get(data[i].getRowCount()-1, "time");
-    let minX = data[i].get(0, "time");
-
-    if (mov-nowAxis>0) {
-      if (mov-nowAxis<imageW/2) {
-        mov=nowAxis+imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
-      if (mov>width-imageW/2) {
-        mov=width-imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
+  if (mode==0 && w>0.1) {
+    //for the time length of events at the lower half of the top half of the window
+    let h1=height/4, y1=height/2;
+    let ts=textS, rL=0, rR=0;
+    x=width/2;
+    if (nowAxis<x-w/2) {
+      x=nowAxis+w/2;
+    }
+    if (nowAxis>x+w/2) {
+      x=nowAxis-w/2;
     }
 
-    if (mov-nowAxis<0) {
-      if (mov-nowAxis>-imageW/2) {
-        mov=nowAxis-imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    textSize(textS);
+    rectMode(CENTER);
+    textAlign(LEFT, CENTER);
+
+    if (w<width/2) {
+      h=map(w, width/2, nowW-lineW, h1, nowH);
+
+      rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      if (nowAxis<x-w/2+rL) {
+        rL=nowAxis-x+w/2;
       }
-      if (mov<imageW/2) {
-        mov=imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
+      rR=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      if (nowAxis>x+w/2-rL) {
+        rR=x+w/2-nowAxis;
       }
+    } else {
+      h=h1;
+      rL=0;
+      rR=0;
+      strokeWeight(map(w, width/2, width*5, 1, 0));
     }
 
-    imgMag[i]=mag;
-    if (movX>maxX) {
-      movX=float(maxX)-0.001;
-      movibleX[i]=movX;
-      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
-    }
-    if (movX<=minX) {
-      movX=float(minX)+0.001;
-      movibleX[i] = movX;
-      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-minX)*secInYear;
-    }
+    if (w>width+textWidth(n)*2+margin*2) {
+      //rect(x, y, width+lineW*2, h1);
+      //rect(x, y1, width+lineW*2, h1);
+      rect(x, y1, width+lineW*2, map(w, width+textWidth(n)*2+margin*2, width*5, h1, height));
+    } else {
+      //fill(0);
+      rect(x, y1, w, h, abs(rL), abs(rR), abs(rR), abs(rL));
 
-    if (img!=undefined) {
-      imageMode(CENTER);
-      if (j<=data[i].getRowCount() && j>0) {
-        noTint();
-        stroke(255);
-        strokeWeight(1);
-
-
-        if (abs(mov-nowAxis)<imageW/2) {
-          tint(255, map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
-          stroke(map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
-        }
-
-
-        line(mov, imgY+imageH/2, mov, height);
-        noStroke();
-
-        if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
-          if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
-            mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
-            imgSelected[i]=true;
-          } else {
-            imgSelected[i]=false;
-          }
-          if (imgSelected[i]===true) {
-            image(img, mov, imgY, imageW*1.1, imageH*1.1);
-          } else {
-            image(img, mov, imgY, imageW, imageH);
-          }
-        }
+      fill(255);
+      if (w>textWidth(n)+ts) {
+        ts=textS;
+      } else {
+        ts=map(w, textWidth(n)+ts, 0, textS, 0);
       }
+      textSize(ts);
+      strokeWeight(textW);
+      text(n, x-w/2+ts/2, y1-h/2+ts+ts/3);
     }
   }
 
-  if (mode==1 && ((start<width*1.25 && start>nowAxis+1) ||
-    (end>-width*0.25 && start<nowAxis-1))) {
+  if (mode==1 && ((start<width*2 && start>nowAxis+1) ||
+    (end>-width*2 && start<nowAxis-1))) {
     //for time points and time spans at the bottom half of the window
 
     let r=10, rL=r, rR=r, h1=height/4;
@@ -746,7 +734,85 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     }
   }
 
+  if (mode==2 && !showSeconds && end>0) {
+    //for geologic time scale (eon,era,period,epoch) at the top of the window
+    let offset=0;
+    if (order==1) {
+      offset=height/16;
+    }
+    if (order==2) {
+      offset=(height/16)*2;
+    }
+    if (order==3) {
+      offset=(height/16)*3;
+    }
+    let h1=height/4-offset;
+    let ts=textS;
 
+
+    w=start-end;
+    h=h1;
+    x=end;
+    y=offset;
+    c.setAlpha(42);
+    fill(c);
+    stroke(255);
+    strokeWeight(1);
+    textSize(textS);
+    rectMode(CORNER);
+    textAlign(LEFT, TOP);
+
+
+    if (abs(w)<nowAxis) {
+      rect(x, y, w, h);
+    } else {
+      rect(x, y, -nowAxis-lineW, h);
+    }
+
+    fill(255);
+
+
+    if (height/16<textS+ts) {
+      ts=map(height/16, textS+ts, 0, textS, 0);
+    }
+    if (textWidth(n)+ts>abs(w)) {
+
+      ts=map(abs(w), textWidth(n)+ts, 0, textS, 0);
+    }
+
+
+    if (ts<5) {
+      //ts=5;
+    }
+
+
+    textSize(ts);
+    noStroke();
+    if (abs(w)>textWidth(n)+ts/2) {
+      if (end>textWidth(n)+ts && start<0) {
+        text(n, ts/2, y+height/64);
+      } else if (end<textWidth(n)+ts) {
+        text(n, x-textWidth(n)-ts/2, y+height/64);
+      } else {
+        text(n, x+w+ts/2, y+height/64);
+      }
+    }
+    if (mouseX<x && mouseX>x+w &&
+      mouseY>y && mouseY<y+height/16) {
+      textSize(textS);
+      strokeWeight(lineW);
+      stroke(255);
+
+      //fill(0);
+      //rect(mouseX, mouseY-textS-10, textWidth(n)+10, textS+10);
+      fill(c);
+      rect(mouseX, mouseY-textS-10, textWidth(n)+10, textS+10);
+
+      fill(255);
+      noStroke();
+      text(n, mouseX+5, mouseY-textS-5);
+    }
+  }
 
   if (mode==3 & w>2 && w<width*10) {
     let ampMargin=lineW+height/10, s=height/2-ampMargin;
@@ -828,124 +894,122 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
 
+  if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
+    //for image sequences that can be dragged change over the timeline
 
-  if (mode==0 && w>0.1) {
-    //for the time length of events at the lower half of the top half of the window
-    let h1=height/4, y1=height/2;
-    let ts=textS, rL=0, rR=0;
-    x=width/2;
-    if (nowAxis<x-w/2) {
-      x=nowAxis+w/2;
-    }
-    if (nowAxis>x+w/2) {
-      x=nowAxis-w/2;
-    }
+    let imgY=height-h;
+    let imageH = imageW*img.height/img.width;
+    let maxX = data[i].get(data[i].getRowCount()-1, "time");
+    let minX = data[i].get(0, "time");
 
-    noFill();
-    stroke(255);
-    strokeWeight(1);
-    textSize(textS);
-    rectMode(CENTER);
-    textAlign(LEFT, CENTER);
-
-    if (w<width/2) {
-      h=map(w, width/2, nowW-lineW, h1, nowH);
-
-      rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
-      if (nowAxis<x-w/2+rL) {
-        rL=nowAxis-x+w/2;
+    if (mov-nowAxis>0) {
+      if (mov-nowAxis<imageW/2) {
+        mov=nowAxis+imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
       }
-      rR=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
-      if (nowAxis>x+w/2-rL) {
-        rR=x+w/2-nowAxis;
+      if (mov>width-imageW/2) {
+        mov=width-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
       }
-    } else {
-      h=h1;
-      rL=0;
-      rR=0;
-      strokeWeight(map(w, width/2, width*5, 1, 0));
     }
 
-    if (w>width+textWidth(n)*2+margin*2) {
-      //rect(x, y, width+lineW*2, h1);
-      //rect(x, y1, width+lineW*2, h1);
-      rect(x, y1, width+lineW*2, map(w, width+textWidth(n)*2+margin*2, width*5, h1, height));
-    } else {
-      //fill(0);
-      rect(x, y1, w, h, abs(rL), abs(rR), abs(rR), abs(rL));
-
-      fill(255);
-      if (w>textWidth(n)+ts) {
-        ts=textS;
-      } else {
-        ts=map(w, textWidth(n)+ts, 0, textS, 0);
+    if (mov-nowAxis<0) {
+      if (mov-nowAxis>-imageW/2) {
+        mov=nowAxis-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
       }
-      textSize(ts);
-      strokeWeight(textW);
-      text(n, x-w/2+ts/2, y1-h/2+ts+ts/3);
+      if (mov<imageW/2) {
+        mov=imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
     }
-  }
 
-
-
-
-
-  if (mode==2 && !showSeconds && end>0) {
-    //for geologic time scale (eon,era,period,epoch) at the top of the window
-    let offset=0;
-    if (order==1) {
-      offset=height/16;
+    imgMag[i]=mag;
+    if (movX>maxX) {
+      movX=float(maxX)-0.001;
+      movibleX[i]=movX;
+      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
     }
-    if (order==2) {
-      offset=(height/16)*2;
+    if (movX<=minX) {
+      movX=float(minX)+0.001;
+      movibleX[i] = movX;
+      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-minX)*secInYear;
     }
-    if (order==3) {
-      offset=(height/16)*3;
-    }
-    let h1=height/4-offset, y1=offset;
-    let ts=textS;
 
-    w=start-end;
-    h=h1;
-    x=end;
-    y=y1;
-    c.setAlpha(42);
-    fill(c);
-    stroke(255);
-    strokeWeight(1);
-    textSize(textS);
-    rectMode(CORNER);
-    textAlign(LEFT, TOP);
+    if (img!=undefined) {
+      imageMode(CENTER);
+      if (j<=data[i].getRowCount() && j>0) {
+        noTint();
+        stroke(255);
+        strokeWeight(1);
 
 
-    if (abs(w)<nowAxis) {
-      rect(x, y, w, h);
-    } else {
-      rect(x, y, -nowAxis-lineW, h);
-    }
-    fill(255);
-    if (textWidth(n)+ts<abs(w)) {
-      ts=textS;
-    } else {
-      ts=map(abs(w), textWidth(n)+textS+margin, 0, textS, 0);
-    }
-    if (ts<5) {
-      ts=5;
-    }
-    textSize(ts);
-    strokeWeight(textW);
-    if (abs(w)>textWidth(n)+ts) {
-      if (end>textWidth(n)+ts && start<0) {
-        text(n, ts/2, y+margin/2);
-      } else if (end<textWidth(n)+ts) {
-        text(n, x-textWidth(n)-ts/2, y+margin/2);
-      } else {
-        text(n, x+w+ts/2, y+margin/2);
+        if (abs(mov-nowAxis)<imageW/2) {
+          tint(255, map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
+          stroke(map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
+        }
+
+
+        line(mov, imgY+imageH/2, mov, height);
+        noStroke();
+
+        if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
+          if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
+            mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
+            imgSelected[i]=true;
+          } else {
+            imgSelected[i]=false;
+          }
+          if (imgSelected[i]===true) {
+            image(img, mov, imgY, imageW*1.1, imageH*1.1);
+          } else {
+            image(img, mov, imgY, imageW, imageH);
+          }
+        }
       }
     }
   }
 }
 
+
+
+function cursorTime() {
+  if ((mouseY<lineH+textS*2 || mouseY>height-lineH-textS*2) && abs(mouseX-nowAxis)>nowLineW/2) {
+    let mouseTime="";
+    if (mouseY>height-lineH-textS*2 ) {
+      if (magnitude>8 && magnitude<23) {
+        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8)), 0)+"a";
+      } else {
+        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip*3.1556952, 3)+"×10"+powerOf(magnitude-8)+"a";
+      }
+    } else {
+      if (magnitude>0 && magnitude<17) {
+        mouseTime=nfc(((mouseX-nowAxis)*scrollValue/skip)*pow(10, magnitude), 0)+"s";
+      } else {
+        mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip, 3)+"×10"+powerOf(magnitude)+"s";
+      }
+    }
+    noStroke();
+    fill(255, 100);
+    textAlign(CENTER);
+    textSize(textS);
+    if (mouseX<=textWidth(mouseTime)/2) {
+      text(mouseTime, textWidth(mouseTime)/2, height/2);
+    } else if (mouseX>=width-textWidth(mouseTime)/2) {
+      text(mouseTime, width-textWidth(mouseTime)/2, height/2);
+    } else {
+      text(mouseTime, mouseX, height/2);
+    }
+    stroke(255, 100);
+    strokeWeight(1);
+    line(mouseX, height/2-(secY/textS)*6, mouseX, 0);
+    line(mouseX, height/2+(secY/textS)*6, mouseX, height);
+  }
+}
 
 function Axis() {
   /*draws the vertical line representing now, switches between stopped time and real-
@@ -1324,7 +1388,7 @@ function seconds() {
   stroke(255);
   strokeWeight(lineW);
   textAlign(CENTER, CENTER);
-
+  let wholeNumber = "";
   for (let sec=0, i=nowAxis; i<width*2; i+=(1/scrollValue)*skip) {
     let unit = "×10"+powerOf(magnitude), s="s", pn=""; //unit=Scientific notation or SI Unit, s=can add an s to second, pn=Positional notation
 
@@ -1746,13 +1810,7 @@ function keyPressed() {
     prefixIndex=11;
   }
   if (key==='0') {
-    prefixIndex=-0;
-  }
-  if (key==='ü') {
-    prefixIndex--;
-  }
-  if (key==='.') {
-    prefixIndex++;
+    prefixIndex=0;
   }
   if (key==='+') {
     scrollValue-=(scrollValue/50);
@@ -1763,30 +1821,20 @@ function keyPressed() {
   if (key===' ') {
     nowAxis=width/2;
   }
-  if (key==='r') {
-    record=!record;
-  }
-  if (key==='s') {
-    showSeconds=!showSeconds;
-  }
-
   if (keyCode===ENTER) {
     stopTime=!stopTime;
   }
   if (keyCode===UP_ARROW) {
-    //movibleX+=10;
+    zoom=0;
   }
   if (keyCode===DOWN_ARROW) {
-    //movibleX-=10;
+    zoom=0;
   }
   if (keyCode===LEFT_ARROW) {
     zoom=-1;
   }
   if (keyCode===RIGHT_ARROW) {
     zoom=1;
-  }
-  if (key==="z") {
-    zoom=0;
   }
 }
 
@@ -1803,6 +1851,9 @@ function windowResized() {
   //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
   resizeCanvas(pW, pH);
   imageW=height/5;
+  if (imageW<=0) {
+    imageW=1;
+  }
   nowAxis=width/2;
 }
 
