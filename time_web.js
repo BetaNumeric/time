@@ -97,6 +97,11 @@ function preload() {
   showTable[7]=true;
   url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=844114706&single=true&output=csv";
 
+  tableName[8]="glacial cycles";
+  showTable[8] = true;
+  url[8] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+  movibleX[8]=-1.1;
+
   for (let i=0; i<url.length; i++) {
     data[i] = loadTable(url[i], 'csv', 'header');
     imgList[i] = [];
@@ -137,6 +142,7 @@ function loadFiles() {
       }
     }
   }
+  print(imgList);
 }
 
 function draw() {
@@ -155,7 +161,6 @@ function draw() {
   }
   background(0);
   fill(255);
-
 
 
   if (mouseIsPressed) {
@@ -364,9 +369,9 @@ function draw() {
     if (unit==="bp") {
       if (e!=t) {
         if (t<0) {
-          timeTxt = "("+nfc(t*pow(10, mag))+" - "+nfc(e*pow(10, mag))+" years ago)";
+          timeTxt = "("+nfc(t*pow(10, mag))+" to "+nfc(e*pow(10, mag))+" years ago)";
         } else {
-          timeTxt = "("+nfc(t*pow(10, mag))+" - "+nfc(e*pow(10, mag))+" years)";
+          timeTxt = "("+nfc(t*pow(10, mag))+" to "+nfc(e*pow(10, mag))+" years)";
         }
       } else {
         if (t<0) {
@@ -484,14 +489,17 @@ function draw() {
     (mouseIsPressed && dragStart<0 && mouseX>=width)) {
     scrollValue+=(scrollValue/50);
   }
-  if (true) {
-    textSize(12);
-    textAlign(RIGHT);
-    fill(255, 127);
-    noStroke();
-    text(nfc(frameRate(), 0), width-6, 10);
-  }
 }
+if (true) {
+  fill(0);
+  noStroke();
+  rect(width-20, 0, 20, 20);
+  textSize(12);
+  textAlign(RIGHT);
+  fill(255, 127);
+  text(nfc(frameRate(), 0), width-6, 10);
+}
+
 
 
 
@@ -754,8 +762,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     h=h1;
     x=end;
     y=offset;
-    c.setAlpha(42);
-    fill(c);
+    c.setAlpha(100);
     stroke(255);
     strokeWeight(1);
     textSize(textS);
@@ -764,8 +771,14 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
     if (abs(w)<nowAxis) {
+      fill(0);
+      rect(x, y, w, h);
+      fill(c);
       rect(x, y, w, h);
     } else {
+      fill(0);
+      rect(x, y, -nowAxis-lineW, h);
+      fill(c);
       rect(x, y, -nowAxis-lineW, h);
     }
 
@@ -799,18 +812,23 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     }
     if (mouseX<x && mouseX>x+w &&
       mouseY>y && mouseY<y+height/16) {
+      let yName=mouseY-textS-5;
+
+      if (mouseY<textS+10) {
+        yName = 5;
+      }
       textSize(textS);
-      strokeWeight(lineW);
+      strokeWeight(1);
       stroke(255);
 
-      //fill(0);
-      //rect(mouseX, mouseY-textS-10, textWidth(n)+10, textS+10);
+      fill(0);
+      rect(mouseX, yName-5, textWidth(n)+10, textS+10);
       fill(c);
-      rect(mouseX, mouseY-textS-10, textWidth(n)+10, textS+10);
+      rect(mouseX, yName-5, textWidth(n)+10, textS+10);
 
       fill(255);
       noStroke();
-      text(n, mouseX+5, mouseY-textS-5);
+      text(n, mouseX+5, yName);
     }
   }
 
@@ -887,15 +905,18 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     let a = new p5.Vector(wave.x, wave.y);
     let b = new p5.Vector(pWave.x, pWave.y);
     a.sub(b);
-    rotate(radians(180)+a.heading());
+    if (abs(a.heading())<2.8) {
+      rotate(radians(180)+a.heading());
+    } else {
+      rotate(0);
+    }
     strokeWeight(textW);
     text(n, 0, -lineW);
     pop();
   }
 
-
   if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
-    //for image sequences that can be dragged change over the timeline
+    //for image sequences that can be dragged changing over the timeline
 
     let imgY=height-h;
     let imageH = imageW*img.height/img.width;
@@ -954,9 +975,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         }
 
 
-        line(mov, imgY+imageH/2, mov, height);
-        noStroke();
-
         if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
           if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
             mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
@@ -964,9 +982,16 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
           } else {
             imgSelected[i]=false;
           }
+
           if (imgSelected[i]===true) {
+
+            line(mov, imgY+(imageH*1.1)/2, mov, height);
+            noStroke();
             image(img, mov, imgY, imageW*1.1, imageH*1.1);
+            text(n, mov, imgY-imageH*0.5);
           } else {
+            line(mov, imgY+imageH/2, mov, height);
+            noStroke();
             image(img, mov, imgY, imageW, imageH);
           }
         }
