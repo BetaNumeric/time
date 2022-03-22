@@ -222,7 +222,7 @@ function draw() {
 
   for (let m=0; m<=4; m++) {
     for (let i=0, c=0; i<data.length; i++) {
-      let name, time, end, unit, mag, mode, order, text, col, img;
+      let name, time, end, unit, mag=0, mode, order, text, col, img;
       for (let j=0; j<data[i].getRowCount(); j++) {
 
 
@@ -290,10 +290,10 @@ function draw() {
           }
         }
 
-
-        if (unit==="ad" && mode===4) {
-          //time -= (year() + (float(dayOfYear) + (float(hour()/24)))/365);
-          //unit = "bp";
+        if (unit==="bp" && mode==4) {
+        //time = time-(year() + (float(dayOfYear) + (float(hour()/24)))/365);
+         //print(time);
+        //unit="bp";
         }
 
 
@@ -540,6 +540,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   let selected=false;
   let margin=textS/2;
   let secInYear=31556952;
+  let ad = (year() + (float(dayOfYear) + (float(hour()/24)))/365);
   let w=1/(scrollValue*pow(10, (prefixIndex*3-mag)))*l,
     start=0,
     end=0,
@@ -559,9 +560,9 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
   if (u === "ad") {
-    start = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*((year() + (float(dayOfYear) + (float(hour()/24)))/365) - l)*secInYear;
-    end = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*((year() + (float(dayOfYear) + (float(hour()/24)))/365) - lx)*secInYear;
-    mov = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*((year() + (float(dayOfYear) + (float(hour()/24)))/365) - movX)*secInYear;
+    start = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(ad - l)*secInYear;
+    end = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(ad - lx)*secInYear;
+    mov = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(ad -movX)*secInYear;
   }
 
 
@@ -580,6 +581,120 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   if (lx==-0.12345) {
     end=nowAxis;
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
+    //for image sequences that can be dragged changing over the timeline
+
+    let imgY=height-h;
+    let imageH = imageW*img.height/img.width;
+    let maxX = data[i].get(data[i].getRowCount()-1, "time");
+    let minX = data[i].get(0, "time");
+
+
+
+    if (mov-nowAxis>0) {
+      if (mov-nowAxis<imageW/2) {
+        mov=nowAxis+imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+      if (mov>width-imageW/2) {
+        mov=width-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+    }
+
+    if (mov-nowAxis<0) {
+      if (mov-nowAxis>-imageW/2) {
+        mov=nowAxis-imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+      if (mov<imageW/2) {
+        mov=imageW/2;
+        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
+        movibleX[i]=movX;
+      }
+    }
+
+
+    //((float(dayOfYear) + (float(hour()/24)))/365)
+    //nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*((year() + (float(dayOfYear) + (float(hour()/24)))/365) - movX)*secInYear;
+
+
+    imgMag[i]=mag;
+    if (movX>maxX) {
+      movX=float(maxX)-0.0001;
+      movibleX[i]=movX;
+      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
+    }
+    if (movX<=minX) {
+      movX=float(minX)+0.0001;
+      movibleX[i] = movX;
+      mov = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
+    }
+
+
+
+    if (img!=undefined) {
+      imageMode(CENTER);
+      if (j<=data[i].getRowCount() && j>0) {
+        noTint();
+        stroke(255);
+        strokeWeight(1);
+
+
+        if (abs(mov-nowAxis)<imageW/2) {
+          tint(255, map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
+          stroke(map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
+        }
+
+
+        if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
+          if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
+            mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
+            imgSelected[i]=true;
+          } else {
+            imgSelected[i]=false;
+          }
+
+          if (imgSelected[i]===true) {
+            line(mov, imgY+(imageH*1.1)/2, mov, height);
+            noStroke();
+            image(img, mov, imgY, imageW*1.1, imageH*1.1);
+            text(n, mov, imgY-imageH*0.6);
+          } else {
+            line(mov, imgY+imageH/2, mov, height);
+            noStroke();
+            image(img, mov, imgY, imageW, imageH);
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
 
 
   if (mode==0 && w>0.1) {
@@ -951,95 +1066,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     strokeWeight(textW);
     text(n, 0, -lineW);
     pop();
-  }
-
-  if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
-    //for image sequences that can be dragged changing over the timeline
-
-    let imgY=height-h;
-    let imageH = imageW*img.height/img.width;
-    let maxX = data[i].get(data[i].getRowCount()-1, "time");
-    let minX = data[i].get(0, "time");
-
-
-    if (mov-nowAxis>0 && u==="bp") {
-      if (mov-nowAxis<imageW/2) {
-        mov=nowAxis+imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
-      if (mov>width-imageW/2) {
-        mov=width-imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
-    }
-
-    if (mov-nowAxis<0 && u==="bp") {
-      if (mov-nowAxis>-imageW/2) {
-        mov=nowAxis-imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
-      if (mov<imageW/2) {
-        mov=imageW/2;
-        movX = ((mov-nowAxis)*scrollValue/skip*3.1556952)*pow(10, (magnitude-8-mag));
-        movibleX[i]=movX;
-      }
-    }
-    text(nf(movX, 0, 0)+"  "+nfc(mov, 0)+"  ", width/10, height/3);
-
-    imgMag[i]=mag;
-    if (movX>maxX) {
-      movX=float(maxX)-0.0001;
-      movibleX[i]=movX;
-      mov=nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
-    }
-    if (movX<=minX) {
-      movX=float(minX)+0.0001;
-      movibleX[i] = movX;
-      mov = nowAxis-1/(scrollValue*pow(10, (prefixIndex*3-mag)))*(-movX)*secInYear;
-    }
-
-
-
-
-    if (img!=undefined) {
-      imageMode(CENTER);
-      if (j<=data[i].getRowCount() && j>0) {
-        noTint();
-        stroke(255);
-        strokeWeight(1);
-
-
-        if (abs(mov-nowAxis)<imageW/2) {
-          tint(255, map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
-          stroke(map(abs(mov-nowAxis), imageW/2, 5, 255, 0));
-        }
-
-
-        if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
-          if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
-            mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
-            imgSelected[i]=true;
-          } else {
-            imgSelected[i]=false;
-          }
-
-          if (imgSelected[i]===true) {
-
-            line(mov, imgY+(imageH*1.1)/2, mov, height);
-            noStroke();
-            image(img, mov, imgY, imageW*1.1, imageH*1.1);
-            text(n, mov, imgY-imageH*0.6);
-          } else {
-            line(mov, imgY+imageH/2, mov, height);
-            noStroke();
-            image(img, mov, imgY, imageW, imageH);
-          }
-        }
-      }
-    }
   }
 }
 
