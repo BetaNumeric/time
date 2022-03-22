@@ -291,9 +291,9 @@ function draw() {
         }
 
         if (unit==="bp" && mode==4) {
-        //time = time-(year() + (float(dayOfYear) + (float(hour()/24)))/365);
-         //print(time);
-        //unit="bp";
+          //time = time-(year() + (float(dayOfYear) + (float(hour()/24)))/365);
+          //print(time);
+          //unit="bp";
         }
 
 
@@ -583,18 +583,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
     //for image sequences that can be dragged changing over the timeline
 
@@ -686,15 +674,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       }
     }
   }
-
-
-
-
-
-
-
-
-
 
 
   if (mode==0 && w>0.1) {
@@ -891,7 +870,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
   if (mode==2 && !showSeconds && end>0) {
-    //for geologic time scale (eon,era,period,epoch) at the top of the window
+    //for geologic time scale (eon, era, period, epoch) at the top of the window
     let offset=0;
     if (order==1) {
       offset=height/16;
@@ -910,7 +889,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     h=h1;
     x=end;
     y=offset;
-    c.setAlpha(100);
+    //c.setAlpha(100);
     stroke(255);
     strokeWeight(1);
     textSize(textS);
