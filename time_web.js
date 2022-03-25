@@ -33,6 +33,7 @@ var pSecond=0;
 var nowSelected=false;
 var txtClicked=false;
 var txtX, txtY, txtW, txtH, txtR;
+var txtM;
 var txtBoxScale=0;
 var txtSource="";
 var txtSourceSelected=false;
@@ -40,6 +41,7 @@ var txtSelected=[];
 var txtId=[];
 var pTxtId=[];
 var imgSelected=[];
+var imgId=[];
 var imgMag=[];
 var imgDragStart=0;
 var stopTime=false;
@@ -89,7 +91,7 @@ function preload() {
   showTable[5]=true;
   url[5]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=0&single=true&output=csv";
   tableName[6]="time spans";
-  showTable[6]=false;
+  showTable[6]=true;
   url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
   tableName[7]="waves";
   showTable[7]=true;
@@ -146,7 +148,6 @@ function loadFiles() {
       }
     }
   }
-  print(imgList);
 }
 
 function draw() {
@@ -340,29 +341,38 @@ function draw() {
   txtId[0]=-1;
   txtId[1]=-1;
 
-  for (let i=0, c=0; i<data.length; i++) {
+  let pMode=-1;
+  for (let i=0; i<data.length; i++) {
     for (let j=0; j<data[i].getRowCount(); j++) {
-      if (txtSelected[i][j]===true) {
-        txtId[0]=i;
-        txtId[1]=j;
-        pTxtId[0]=txtId[0];
-        pTxtId[1]=txtId[1];
+      if (txtSelected[i][j]===true && nowSelected===false && nowLineW<=0) {
+        if ((data[i].get(j, "mode")==0 && pMode<0) || data[i].get(j, "mode")!=0) {
+          txtId[0]=i;
+          txtId[1]=j;
+          pTxtId[0]=txtId[0];
+          pTxtId[1]=txtId[1];
+          pMode = data[i].get(j, "mode");
+        }
       }
       txtSelected[i][j]=false;
     }
   }
 
+
+
   if (txtClicked===true) {
     rectMode(CORNER);
     textAlign(TOP, TOP);
     textSize(textS);
-    let txt="", n="", timeTxt="", t, e, mag=0, unit;
+    let txt="", n="", timeTxt="", t, e, mag=0, unit, mode;
     txtSource="";
     txtSourceSelected=false;
 
     for (let k=0; k<data[pTxtId[0]].getColumnCount(); k++) {
       if (data[pTxtId[0]].columns[k] === "mag") {
         mag = data[pTxtId[0]].get(pTxtId[1], "mag");
+      }
+      if (data[pTxtId[0]].columns[k] === "mode") {
+        mode = data[pTxtId[0]].get(pTxtId[1], "mode");
       }
       if (data[pTxtId[0]].columns[k] === "time") {
         t = data[pTxtId[0]].get(pTxtId[1], "time");
@@ -389,9 +399,15 @@ function draw() {
       }
       if (data[pTxtId[0]].columns[k] === "text") {
         txt = "\n"+data[pTxtId[0]].getString(pTxtId[1], "text")+"\n";
+        if (data[pTxtId[0]].get(pTxtId[1], "mode")==4) {
+          txt = "\n"+data[pTxtId[0]].getString(0, "text")+"\n";
+        }
       }
       if (data[pTxtId[0]].columns[k] === "source") {
         txtSource = ""+data[pTxtId[0]].getString(pTxtId[1], "source");
+        if (data[pTxtId[0]].get(pTxtId[1], "mode")==4) {
+          txtSource = ""+data[pTxtId[0]].getString(0, "source");
+        }
       }
     }
 
@@ -442,10 +458,12 @@ function draw() {
     let txtXpos = txtX-txtWidth/2;
     let txtYpos = txtY-txtHeight-textS;
 
+    if (mode==4) {
+      txtHeight = (textWidth(txt)/txtWidth)*textLeading()+textLeading()+textS;
+      txtXpos = txtX-txtWidth/2;
+      txtYpos = txtY-txtHeight-textS;
+    }
 
-    fill(0);
-    stroke(255);
-    strokeWeight(1);
 
     if (txtBoxScale<100) {
       txtBoxScale+=15;
@@ -460,15 +478,32 @@ function draw() {
       txtXpos = 0;
     }
 
-
     let txtBoxX = map(txtBoxScale, 0, 100, txtX-txtW/2, txtXpos);
     let txtBoxY = map(txtBoxScale, 0, 100, txtY-txtH, txtYpos);
     let txtBoxW = map(txtBoxScale, 0, 100, txtW, txtWidth+textS);
     let txtBoxH = map(txtBoxScale, 0, 100, txtH, txtHeight+textS);
     let txtBoxR = map(txtBoxScale, 0, 100, txtR, 0);
 
-    rect(txtBoxX, txtBoxY, txtBoxW, txtBoxH, txtBoxR);
+    if (mode==4) {
+      txtBoxX = map(txtBoxScale, 0, 100, txtX-txtW/2, txtXpos);
+      txtBoxY = map(txtBoxScale, 0, 100, txtY-txtH, txtYpos);
+      txtBoxW = map(txtBoxScale, 0, 100, txtW, txtWidth+textS);
+      txtBoxH = map(txtBoxScale, 0, 100, txtH, txtHeight+textS);
+      txtBoxR = 0;
+    }
 
+    if (mode==0 && (txtW>txtBoxW || txtH>txtBoxH)) {
+      txtBoxX = txtX-txtW/2;
+      txtBoxY = txtY-txtH;
+      txtBoxW = txtW;
+      txtBoxH = txtH;
+      txtBoxR = 0;
+    }
+
+    fill(0);
+    stroke(255);
+    strokeWeight(1);
+    rect(txtBoxX, txtBoxY, txtBoxW, txtBoxH, txtBoxR);
 
     noStroke();
     fill(255);
@@ -477,21 +512,24 @@ function draw() {
     if (txtSource!="" && txtBoxScale>=100) {
       textAlign(RIGHT);
       textStyle(ITALIC);
-      text("🔗", txtXpos+txtWidth+textS/2, txtYpos+txtHeight-textS/2);
 
-      if (mouseX<txtXpos+txtWidth+textS/2 &&
-        mouseX>txtXpos+txtWidth+textS/2-textWidth("🔗") &&
-        mouseY<txtYpos+txtHeight-textS/2+textLeading() &&
-        mouseY>txtYpos+txtHeight-textS/2) {
+      text("🔗", txtBoxX+txtBoxW-textS/2, txtBoxY+txtBoxH-textS-textS/2);
+      //text("🔗", txtXpos+txtWidth+textS/2, txtYpos+txtHeight-textS/2);
+      //text("🔗", txtXpos+txtWidth+textS/2, txtYpos+txtHeight-textS/2);
+
+      if (mouseX<txtBoxX+txtBoxW-textS/2 &&
+        mouseX>txtBoxX+txtBoxW-textS/2-textWidth("🔗") &&
+        mouseY<txtBoxY+txtBoxH-textS-textS/2+textLeading()-5 &&
+        mouseY>txtBoxY+txtBoxH-textS-textS/2-5) {
         txtSourceSelected=true;
         textAlign(CENTER);
         fill(255, 100);
-        if (mouseX+5+textWidth(txtSource)>width) {
+        if (mouseX+5+textWidth(txtSource)/2>width) {
           text(txtSource, width-textWidth(txtSource)/2-5, mouseY+textLeading());
-        } else if (mouseX-5-textWidth(txtSource)<0) {
+        } else if (mouseX-textWidth(txtSource)/2-5<0) {
           text(txtSource, textWidth(txtSource)/2+5, mouseY+textLeading());
         } else {
-          text(txtSource, mouseX+5, mouseY+textLeading());
+          text(txtSource, mouseX, mouseY+textLeading());
         }
       }
     }
@@ -508,7 +546,7 @@ function draw() {
 
     fill(255);
     textAlign(LEFT);
-    text(txt, txtBoxX+textS/2, txtBoxY+textS*2/3, txtBoxW, txtBoxH-textS);
+    text(txt, txtBoxX+textS/2, txtBoxY+textS*2/3, txtBoxW-textS/2, txtBoxH-textS);
   } else {
     txtBoxScale=0;
   }
@@ -551,6 +589,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
   textSize(textS);
   rectMode(CORNER);
+  textAlign(CENTER);
   noFill();
   fill(255);
   stroke(255);
@@ -586,7 +625,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   if (mode==4 && abs(mov-nowAxis)>5 && abs(mov-nowAxis)<width+imageW/2) {
     //for image sequences that can be dragged changing over the timeline
 
-    let imgY=height-h;
+    let imageY=height-h;
     let imageH = imageW*img.height/img.width;
     let maxX = data[i].get(data[i].getRowCount()-1, "time");
     let minX = data[i].get(0, "time");
@@ -637,7 +676,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     }
 
 
-
     if (img!=undefined) {
       imageMode(CENTER);
       if (j<=data[i].getRowCount() && j>0) {
@@ -653,22 +691,35 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
         if (data[i].get(j-1, "time")<=movX && data[i].get(j, "time")>movX) {
-          if (mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
-            mouseY<imgY+imageH/2 && mouseY>imgY-imageH/2) {
+          if (txtClicked===false &&
+            mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
+            mouseY<imageY+imageH/2 && mouseY>imageY-imageH/2) {
             imgSelected[i]=true;
+            if (mouseWasDragged===false) {
+              cursor('pointer');
+              txtX=mov;
+              txtY=imageY-imageH/2;
+              txtW=imageW;
+              txtH=imageH;
+              txtSelected[i][j]=true;
+            }
           } else {
             imgSelected[i]=false;
+            txtSelected[i][j]=false;
           }
 
           if (imgSelected[i]===true) {
-            line(mov, imgY+(imageH*1.1)/2, mov, height);
+            line(mov, imageY+(imageH*1.1)/2, mov, height);
             noStroke();
-            image(img, mov, imgY, imageW*1.1, imageH*1.1);
-            text(n, mov, imgY-imageH*0.6);
+            image(img, mov, imageY, imageW*1.1, imageH*1.1);
+            fill(0);
+            rect(mov-textWidth(n)/2-3, imageY-imageH*0.6, textWidth(n)+6, -textS-3, 3);
+            fill(255);
+            text(n, mov, imageY-imageH*0.6);
           } else {
-            line(mov, imgY+imageH/2, mov, height);
+            line(mov, imageY+imageH/2, mov, height);
             noStroke();
-            image(img, mov, imgY, imageW, imageH);
+            image(img, mov, imageY, imageW, imageH);
           }
         }
       }
@@ -679,7 +730,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   if (mode==0 && w>0.1) {
     //for the time length of events at the lower half of the top half of the window
     let h1=height/4, y1=height/2;
-    let ts=textS, rL=0, rR=0;
+    let ts=textS, r=0, rL=0, rR=0;
     x=width/2;
     if (nowAxis<x-w/2) {
       x=nowAxis+w/2;
@@ -699,6 +750,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       h=map(w, width/2, nowW-lineW, h1, nowH);
 
       rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      r=rL;
       if (nowAxis<x-w/2+rL) {
         rL=nowAxis-x+w/2;
       }
@@ -719,17 +771,39 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       rect(x, y1, width+lineW*2, map(w, width+textWidth(n)*2+margin*2, width*5, h1, height));
     } else {
       //fill(0);
+      if (w<width && mouseX>x-w/2 && mouseX<x+w/2 &&
+        mouseY>y1-h/2 && mouseY<y1+h/2 &&
+        mouseWasDragged===false && txtClicked===false) {
+        cursor('pointer');
+        txtX=x;
+        txtY=y1+h/2;
+        txtW=w;
+        txtH=h;
+        txtR=r;
+        txtSelected[i][j]=true;
+      } else {
+        txtSelected[i][j]=false;
+      }
+      if (txtId[0]===i && txtId[1]===j) {
+        fill(255, 20);
+      }
       rect(x, y1, w, h, abs(rL), abs(rR), abs(rR), abs(rL));
 
       fill(255);
-      if (w>textWidth(n)+ts) {
+      if (w>textWidth(n)+ts+r) {
         ts=textS;
       } else {
-        ts=map(w, textWidth(n)+ts, 0, textS, 0);
+        ts=map(w, textWidth(n)+ts+r, 0, textS, 0);
       }
       textSize(ts);
       strokeWeight(textW);
-      text(n, x-w/2+ts/2, y1-h/2+ts+ts/3);
+      text(n, x-w/2+ts/2+r/4, y1-h/2+ts+r/4);
+
+      //textAlign(TOP, TOP);
+      //rectMode(CORNER);
+      //textAlign(TOP, TOP);
+      //fill(127);
+      //text("\n"+t, x+ts/2+r/8, y1+ts/2+r/8, w-r, h-r);
     }
   }
 
@@ -830,8 +904,8 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
         mouseX<x+(textWidth(n)+margin*2*scale)/2 &&
         mouseY>height-h-((textS+margin*2)*scale) &&
         mouseY<height-h) {
-        txtSelected[i][j]=true;
         cursor("pointer");
+        txtSelected[i][j]=true;
       } else {
         txtSelected[i][j]=false;
       }
@@ -884,18 +958,16 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     let h1=height/4-offset;
     let ts=textS;
 
-
     w=start-end;
     h=h1;
     x=end;
     y=offset;
-    //c.setAlpha(100);
+    c.setAlpha(90);
     stroke(255);
     strokeWeight(1);
     textSize(textS);
     rectMode(CORNER);
     textAlign(LEFT, TOP);
-
 
     if (abs(w)<nowAxis) {
       fill(0);
@@ -910,7 +982,6 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     }
 
     fill(255);
-
 
     if (height/16<textS+ts) {
       ts=map(height/16, textS+ts, 0, textS, 0);
@@ -938,16 +1009,15 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
       }
     }
     if (mouseX<x && mouseX>x+w &&
-      mouseY>y && mouseY<y+height/16) {
+      mouseY>y && mouseY<y+height/16 && ts<textS/2) {
+      cursor('pointer');
       let yName=mouseY-textS-5;
 
       if (mouseY<textS+10) {
         yName = 5;
       }
       textSize(textS);
-      strokeWeight(1);
-      stroke(255);
-
+      noStroke();
       fill(0);
       rect(mouseX, yName-5, textWidth(n)+10, textS+10);
       fill(c);
@@ -1129,7 +1199,9 @@ function Axis() {
   stroke(255);
   textSize(textS);
   strokeWeight(lineW);
+
   nowX=nowAxis;
+
   nowY=height/2;
   if (stopTime) {
     nowTxt="now";
@@ -1448,7 +1520,7 @@ function seconds() {
   textAlign(CENTER, CENTER);
   let wholeNumber = "";
   for (let sec=0, i=nowAxis; i<width*2; i+=(1/scrollValue)*skip) {
-    let unit = "×10"+powerOf(magnitude), s="s", pn=""; //unit=Scientific notation or SI Unit, s=can add an s to second, pn=Positional notation
+    let unit = "×10"+powerOf(magnitude)+"s", s="s", pn=""; //unit=Scientific notation or SI Unit, s=can add an s to second, pn=Positional notation
 
     if (prefixIndex<0 && abs(prefixIndex)<prefixS[0].length) {
       unit = prefixS[0][abs(prefixIndex)]+"s";
@@ -1457,11 +1529,13 @@ function seconds() {
       unit = prefixL[0][prefixIndex]+"s";
     }
 
-    if (showSeconds && i==nowAxis+(1/scrollValue)*skip) {
+    if (i==nowAxis+(1/scrollValue)*skip) {
       for (let j=nowAxis+(1/scrollValue)*skip/10; j<=2*((1/scrollValue)*skip)+nowAxis-((1/scrollValue)*skip/10)/2; j+=(1/scrollValue)*skip/10) {
         //draws receding lines:
         line(j, map(((1/scrollValue)*skip), 100, 1000, -lineW, lineH), j, -lineW);
-        line(2*nowAxis-j, map(((1/scrollValue)*skip), 100, 1000, -lineW, lineH), 2*nowAxis-j, -lineW);
+        if (showSeconds) {
+          line(2*nowAxis-j, map(((1/scrollValue)*skip), 100, 1000, -lineW, lineH), 2*nowAxis-j, -lineW);
+        }
       }
       if (skip==1) {
         s="";
@@ -1491,23 +1565,26 @@ function seconds() {
         wholeNumber="0."+pn+"1s";
       }
     }
-    if (showSeconds) {
-      if (sec==0) {
-        if (!stopTime) {
-          strokeWeight(textW);
-          text(int(sec), i, secY);
-          strokeWeight(lineW);
-          line(i, 0, i, lineH);
-        }
-      } else {
+    if (sec==0) {
+      if (!stopTime && showSeconds) {
         strokeWeight(textW);
-        text(int(sec)+unit, i, secY);
-        text("-"+int(sec)+unit, 2*nowAxis-i, secY);
+        text(int(sec), i, secY);
         strokeWeight(lineW);
         line(i, 0, i, lineH);
+      }
+    } else {
+      strokeWeight(textW);
+      text(int(sec)+unit, i, secY);
+      strokeWeight(lineW);
+      line(i, 0, i, lineH);
+      if (showSeconds) {
+        strokeWeight(textW);
+        text("-"+int(sec)+unit, 2*nowAxis-i, secY);
+        strokeWeight(lineW);
         line(2*nowAxis-i, 0, 2*nowAxis-i, lineH);
       }
     }
+
 
     if (prefixIndex<prefixL[1].length && abs(prefixIndex)<prefixS[0].length) {
       sec+=skip;
@@ -1515,7 +1592,7 @@ function seconds() {
       sec++;
     }
   }
-  if (showSeconds) {
+  if (false) {
     fill(0);
     noStroke();
     rectMode(CORNER);
@@ -1735,37 +1812,6 @@ function powerOf(n) {
 }
 
 
-function updateImgSize() {
-  print("updateImgSize");
-  for (let i=0; i<data.length; i++) {
-    for (let j=0; j<data[i].getRowCount(); j++) {
-      for (let k=0; k<data[i].getColumnCount(); k++) {
-        if (data[i].getColumnTitle(k)==="img" && data[i].getString(j, "img")!==("")) {
-
-
-          imgList[i][j] = loadImage("data/images/"+data[i].getString(j, "img"));
-          let imageRatio = 1, imageH=1;
-          if (imgList[i][j].height>imgList[i][j].width) {
-            imageRatio=float(imgList[i][j].width)/float(imgList[i][j].height);
-            imageH=imageW*imageRatio;
-            if (imageH<1) {
-              imageH=1;
-            }
-            imgList[i][j].resize(int(imageW*imageRatio), imageW);
-          } else {
-            imageRatio=float(imgList[i][j].height)/float(imgList[i][j].width);
-            imageH=imageW*imageRatio;
-            if (imageH<1) {
-              imageH=1;
-            }
-            imgList[i][j].resize(imageW, int(imageH));
-          }
-        }
-      }
-    }
-  }
-}
-
 
 function mousePressed() {
   dragStart=mouseX-nowAxis;
@@ -1803,6 +1849,9 @@ function mouseDragged() {
     if (mouseButton==CENTER || (mouseIsPressed && nowSelected && abs(dragStart)<nowW/2)) {
       if (nowAxis+mouseX-pmouseX>=0 && nowAxis+mouseX-pmouseX<=width) {
         nowAxis = mouseX-dragStart;
+        if (abs(nowAxis-width/2)<15) {
+          nowAxis=width/2;
+        }
       }
     } else {
       if (mouseButton==LEFT && !nowSelected && abs(dragStart)>nowLineW/2) {
@@ -1922,6 +1971,7 @@ function mouseClicked() {
     txtClicked=false;
     txtSourceSelected=false;
   }
+
   if (txtId[0]>=0) {
     txtClicked=true;
   } else {
