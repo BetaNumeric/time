@@ -41,6 +41,7 @@ var txtSelected=[];
 var txtId=[];
 var pTxtId=[];
 var imgSelected=[];
+var imgSel=false;
 var imgId=[];
 var imgMag=[];
 var imgDragStart=0;
@@ -53,6 +54,7 @@ var zoom=0;
 function setup() {
   let cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("program");
+  frameRate(60);
   windowResized();
   nowAxis=width/2;
   imageW=height/5;
@@ -345,7 +347,7 @@ function draw() {
   for (let i=0; i<data.length; i++) {
     for (let j=0; j<data[i].getRowCount(); j++) {
       if (txtSelected[i][j]===true && nowSelected===false && nowLineW<=0) {
-        if ((data[i].get(j, "mode")==0 && pMode<0) || data[i].get(j, "mode")!=0) {
+        if ((data[i].get(j, "mode")==0 && pMode<=0) || data[i].get(j, "mode")!=0) {
           txtId[0]=i;
           txtId[1]=j;
           pTxtId[0]=txtId[0];
@@ -553,9 +555,11 @@ function draw() {
 
   if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||
     (mouseIsPressed && dragStart<0 && mouseX<=0)) {
+
     scrollValue-=(scrollValue/50);
   } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) ||
     (mouseIsPressed && dragStart<0 && mouseX>=width)) {
+
     scrollValue+=(scrollValue/50);
   }
 
@@ -566,7 +570,7 @@ function draw() {
     textSize(12);
     textAlign(RIGHT);
     fill(255, 127);
-    text(nfc(frameRate(), 0), width-6, 10);
+    text(mouseWasDragged+"  "+nfc(frameRate(), 0), width-6, 10);
   }
   //image(imgList[9][0],mouseX,mouseY);
 }
@@ -1194,7 +1198,7 @@ function Axis() {
   }
 
   fill(0);
-  textAlign(CENTER, CENTER);
+  textAlign(LEFT, CENTER);
   rectMode(CENTER);
   stroke(255);
   textSize(textS);
@@ -1209,7 +1213,7 @@ function Axis() {
   } else {
     nowTxt="00:00:00.00";
     nowW=textWidth(nowTxt)+textS*1.5;
-    nowTxt=nf(hour(), 2)+":"+nf(minute(), 2)+":"+nf(second()+milliSecond, 2, 2)+"\n"+nf(day(), 2)+"/"+nf(month(), 2)+"/"+year();
+    nowTxt=nf(hour(), 2)+":"+nf(minute(), 2)+":"+nf(second()+milliSecond, 2, 2)+"\n "+nf(day(), 2)+"/"+nf(month(), 2)+"/"+year();
   }
   nowRl=abs((nowW-nowLineW)/7);
   nowRr=abs((nowW-nowLineW)/7);
@@ -1258,10 +1262,10 @@ function Axis() {
 
   fill(255);
   strokeWeight(textW);
-  text(nowTxt, nowX+nowXoffset, nowY);
+  text(nowTxt, nowX-nowW/2+textS*3/4+nowXoffset, nowY);
 
 
-
+  textAlign(CENTER, CENTER);
   if (nowLineW>0) {
     for (let i=0; i<tableName.length; i++) {
       let x=nowX+map(nowLineW, 0, maxTableNameLength, 0, nowXoffset)-nowLineW/2;
@@ -1442,6 +1446,10 @@ function timeScroll() {
             } else {
               text(round(x)+Unit[u], i-scroll, height-h/2);
             }
+            if (mouseX>i-scroll-textWidth(round(x)+Unit[u])/2 &&
+              mouseX<i-scroll+textWidth(round(x)+Unit[u])/2) {
+              //text(round(x)+Unit[u], mouseX, mouseY-textS*1.5);
+            }
           }
         }
       }
@@ -1514,7 +1522,6 @@ function timeScroll() {
 
 function seconds() {
 
-  fill(255);
   stroke(255);
   strokeWeight(lineW);
   textAlign(CENTER, CENTER);
@@ -1565,6 +1572,7 @@ function seconds() {
         wholeNumber="0."+pn+"1s";
       }
     }
+    fill(255);
     if (sec==0) {
       if (!stopTime && showSeconds) {
         strokeWeight(textW);
@@ -1574,12 +1582,40 @@ function seconds() {
       }
     } else {
       strokeWeight(textW);
-      text(int(sec)+unit, i, secY);
+      text(sec+""+unit, i, secY);
+      if (mouseX>i-textWidth(sec+unit)/2 &&
+        mouseX<i+textWidth(sec+unit)/2 &&
+        mouseY>secY-textS/2 &&
+        mouseY<secY+textS/2 &&
+        prefixIndex<prefixL[1].length) {
+        fill(100);
+        if (prefixIndex<0) {
+          text("("+sec+" "+prefixS[1][abs(prefixIndex)]+"second"+s+")", mouseX, mouseY+textS*1.5);
+        } else {
+          text("("+sec+" "+prefixL[1][abs(prefixIndex)]+"second"+s+")", mouseX, mouseY+textS*1.5);
+        }
+      }
+
       strokeWeight(lineW);
       line(i, 0, i, lineH);
+
       if (showSeconds) {
+        fill(255);
         strokeWeight(textW);
-        text("-"+int(sec)+unit, 2*nowAxis-i, secY);
+        text("-"+sec+""+unit, 2*nowAxis-i, secY);
+
+        if (mouseX>2*nowAxis-i-textWidth("-"+sec+unit)/2 &&
+          mouseX<2*nowAxis-i+textWidth("-"+sec+unit)/2 &&
+          mouseY>secY-textS/2 &&
+          mouseY<secY+textS/2 &&
+          prefixIndex<prefixS[1].length) {
+          fill(100);
+          if (prefixIndex<0) {
+            text("(-"+sec+" "+prefixS[1][abs(prefixIndex)]+"second"+s+")", mouseX, mouseY+textS*1.5);
+          } else {
+            text("(-"+sec+" "+prefixL[1][abs(prefixIndex)]+"second"+s+")", mouseX, mouseY+textS*1.5);
+          }
+        }
         strokeWeight(lineW);
         line(2*nowAxis-i, 0, 2*nowAxis-i, lineH);
       }
@@ -1666,7 +1702,8 @@ function years() {
 
   for (let yr=0, i=nowAxis; i<width*2; i+=(1/scrollValue)*0.31556952*ySkip) {
     let unit="×10"+powerOf(yearMagnitude)+"a";
-    let year=0;
+    let unitEx="";
+    let year=0, s="";
     textAlign(CENTER, CENTER);
     strokeWeight(lineW);
     stroke(255);
@@ -1674,6 +1711,7 @@ function years() {
     if (yearPrefixIndex>=0) {
       if (yearPrefixIndex<prefixL[0].length) {
         unit=prefixL[0][yearPrefixIndex]+"a";
+        unitEx=prefixL[1][yearPrefixIndex]+"-annum";
       }
       if (scrollValue>0.1 && yr>=1000) {
         year=round(yr/1000);
@@ -1682,8 +1720,10 @@ function years() {
           year=yr/1000;
           if (yearPrefixIndex<prefixL[0].length-1) {
             unit=prefixL[0][yearPrefixIndex+1]+"a";
+            unitEx=prefixL[1][yearPrefixIndex+1]+"-annum";
           } else if (yearPrefixIndex<prefixL[0].length) {
             unit="×10"+powerOf(yearMagnitude+1)+"a";
+            unitEx="";
           }
         } else {
           year=round(yr);
@@ -1705,6 +1745,9 @@ function years() {
         }
       }
 
+      if (year>1) {
+        s="s";
+      }
 
       if (stopTime || yearMagnitude>=6) {
         if (year==0 && !stopTime) {
@@ -1718,6 +1761,22 @@ function years() {
           strokeWeight(textW);
           text(nf(year)+unit, i, height-yearY);
           text("-"+nf(year)+unit, 2*nowAxis-i, height-yearY);
+        }
+        if (unitEx!="" &&
+          mouseX>i-textWidth(nf(year)+unit)/2 &&
+          mouseX<i+textWidth(nf(year)+unit)/2 &&
+          mouseY>height-yearY-textS/2 &&
+          mouseY<height-yearY+textS/2) {
+          fill(100);
+          text("("+nf(year)+" "+unitEx+s+")", mouseX, mouseY-textS*1.5);
+        }
+        if (unitEx!="" &&
+          mouseX>2*nowAxis-i-textWidth("-"+nf(year)+unit)/2 &&
+          mouseX<2*nowAxis-i+textWidth("-"+nf(year)+unit)/2 &&
+          mouseY>height-yearY-textS/2 &&
+          mouseY<height-yearY+textS/2) {
+          fill(100);
+          text("(-"+nf(year)+" "+unitEx+s+")", mouseX, mouseY-textS*1.5);
         }
       } else {
         line(i-yearZero, height, i-yearZero, height-lineH);
@@ -1822,6 +1881,7 @@ function mouseReleased() {
     stopTime=!stopTime;
   }
   mouseWasDragged=false;
+  imgSel=false;
   dragStart=0;
   imgDragStart=0;
 
@@ -1855,7 +1915,8 @@ function mouseDragged() {
       }
     } else {
       if (mouseButton==LEFT && !nowSelected && abs(dragStart)>nowLineW/2) {
-        let imgSel=false, imgSelID=-1;
+        imgSel=false;
+        let imgSelID=-1;
         for (let i=0; i<imgSelected.length; i++) {
           if (imgSelected[i]) {
             imgSel=true;
@@ -1889,6 +1950,7 @@ function mouseDragged() {
 
 function keyPressed() {
   txtClicked=false;
+  imgSel=false;
   if (key==='1') {
     prefixIndex=1;
   }
