@@ -553,24 +553,42 @@ function draw() {
     txtBoxScale=0;
   }
 
-  if (zoom<0 || (mouseIsPressed && dragStart>0 && mouseX>=width) ||
-    (mouseIsPressed && dragStart<0 && mouseX<=0)) {
-
+  if (zoom<0 ||
+    (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===false) ||
+    (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===false) ||
+    (mouseIsPressed && dragStart<0 && mouseX>nowAxis && imgSel===true) ||
+    (mouseIsPressed && dragStart>0 && mouseX<nowAxis && imgSel===true)) {
+    if (dragStart<0 && imgSelID>=0) {
+      movibleX[imgSelID] += (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
+    }
+    if (dragStart>0 && imgSelID>=0) {
+      movibleX[imgSelID] -= (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
+    }
     scrollValue-=(scrollValue/50);
-  } else if (zoom>0  ||  (mouseIsPressed && dragStart>0 && mouseX<=0) ||
-    (mouseIsPressed && dragStart<0 && mouseX>=width)) {
-
-    scrollValue+=(scrollValue/50);
   }
 
-  if (true) {
+  if (zoom>0  ||
+    (mouseIsPressed && dragStart>0 && mouseX<=0 && imgSel===false) ||
+    (mouseIsPressed && dragStart<0 && mouseX>=width && imgSel===false) ||
+    (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===true) ||
+    (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===true)) {
+    scrollValue+=(scrollValue/50);
+    if (dragStart<0 && imgSelID>=0) {
+      movibleX[imgSelID] -= (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
+    }
+    if (dragStart>0 && imgSelID>=0) {
+      movibleX[imgSelID] += (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
+    }
+  }
+
+  if (true || mouseX>width-40 && mouseY<40) {
     fill(0);
     noStroke();
     rect(width-20, 0, 20, 20);
     textSize(12);
     textAlign(RIGHT);
     fill(255, 127);
-    text(mouseWasDragged+"  "+nfc(frameRate(), 0), width-6, 10);
+    text(imgSel+""+nfc(frameRate(), 0), width-6, 10);
   }
   //image(imgList[9][0],mouseX,mouseY);
 }
@@ -698,7 +716,9 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
           if (txtClicked===false &&
             mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
             mouseY<imageY+imageH/2 && mouseY>imageY-imageH/2) {
-            imgSelected[i]=true;
+            if (imgSel===false) {
+              imgSelected[i]=true;
+            }
             if (mouseWasDragged===false) {
               cursor('pointer');
               txtX=mov;
@@ -1882,6 +1902,7 @@ function mouseReleased() {
   }
   mouseWasDragged=false;
   imgSel=false;
+  imgSelID=-1;
   dragStart=0;
   imgDragStart=0;
 
@@ -1915,8 +1936,8 @@ function mouseDragged() {
       }
     } else {
       if (mouseButton==LEFT && !nowSelected && abs(dragStart)>nowLineW/2) {
-        imgSel=false;
-        let imgSelID=-1;
+        //imgSel=false;
+        //let imgSelID=-1;
         for (let i=0; i<imgSelected.length; i++) {
           if (imgSelected[i]) {
             imgSel=true;
@@ -1951,36 +1972,38 @@ function mouseDragged() {
 function keyPressed() {
   txtClicked=false;
   imgSel=false;
+  /*
   if (key==='1') {
-    prefixIndex=1;
-  }
-  if (key==='2') {
-    prefixIndex=2;
-  }
-  if (key==='3') {
-    prefixIndex=3;
-  }
-  if (key==='4') {
-    prefixIndex=4;
-  }
-  if (key==='5') {
-    prefixIndex=5;
-  }
-  if (key==='6') {
-    prefixIndex=6;
-  }
-  if (key==='7') {
-    prefixIndex=7;
-  }
-  if (key==='8') {
-    prefixIndex=8;
-  }
-  if (key==='9') {
-    prefixIndex=11;
-  }
-  if (key==='0') {
-    prefixIndex=0;
-  }
+   prefixIndex=1;
+   }
+   if (key==='2') {
+   prefixIndex=2;
+   }
+   if (key==='3') {
+   prefixIndex=3;
+   }
+   if (key==='4') {
+   prefixIndex=4;
+   }
+   if (key==='5') {
+   prefixIndex=5;
+   }
+   if (key==='6') {
+   prefixIndex=6;
+   }
+   if (key==='7') {
+   prefixIndex=7;
+   }
+   if (key==='8') {
+   prefixIndex=8;
+   }
+   if (key==='9') {
+   prefixIndex=11;
+   }
+   if (key==='0') {
+   prefixIndex=0;
+   }
+   */
   if (key==='+') {
     scrollValue-=(scrollValue/50);
   }
@@ -1993,10 +2016,7 @@ function keyPressed() {
   if (keyCode===ENTER) {
     stopTime=!stopTime;
   }
-  if (keyCode===UP_ARROW) {
-    zoom=0;
-  }
-  if (keyCode===DOWN_ARROW) {
+  if (keyCode===UP_ARROW || keyCode===DOWN_ARROW) {
     zoom=0;
   }
   if (keyCode===LEFT_ARROW) {
