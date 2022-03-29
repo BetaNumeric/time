@@ -718,7 +718,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
           if (txtClicked===false &&
             mouseX<mov+imageW/2 && mouseX>mov-imageW/2 &&
             mouseY<imageY+imageH/2 && mouseY>imageY-imageH/2) {
-            if (imgSel===false) {
+            if (mouseWasDragged===false && imgSel===false) {
               imgSelected[i]=true;
             }
             if (mouseWasDragged===false) {
@@ -1925,10 +1925,12 @@ function mouseWheel(event) {
 }
 
 function mouseDragged() {
-  if (dragStart>-nowAxis && dragStart<width && mouseY>0 && mouseY<height) {
+  if (mouseY>0 && mouseY<height) {
     //right drag moves the 0-point, left drag zooms in and out (depending which side was pressed first)
     let bufferZone=150, speed=bufferZone;
+
     mouseWasDragged=true;
+
     if (mouseButton==CENTER || (mouseIsPressed && nowSelected && abs(dragStart)<nowW/2)) {
       if (nowAxis+mouseX-pmouseX>=0 && nowAxis+mouseX-pmouseX<=width) {
         nowAxis = mouseX-dragStart;
