@@ -42,6 +42,7 @@ var txtId=[];
 var pTxtId=[];
 var imgSelected=[];
 var imgSel=false;
+var imgSelID=-1;
 var imgId=[];
 var imgMag=[];
 var imgDragStart=0;
@@ -573,6 +574,7 @@ function draw() {
     (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===true) ||
     (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===true)) {
     scrollValue+=(scrollValue/50);
+
     if (dragStart<0 && imgSelID>=0) {
       movibleX[imgSelID] -= (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
     }
@@ -581,14 +583,14 @@ function draw() {
     }
   }
 
-  if (true || mouseX>width-40 && mouseY<40) {
+  if (mouseX>width-40 && mouseY<40) {
     fill(0);
     noStroke();
     rect(width-20, 0, 20, 20);
     textSize(12);
     textAlign(RIGHT);
     fill(255, 127);
-    text(imgSel+""+nfc(frameRate(), 0), width-6, 10);
+    text(nfc(frameRate(), 0), width-6, 10);
   }
   //image(imgList[9][0],mouseX,mouseY);
 }
