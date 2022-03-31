@@ -71,22 +71,26 @@ function preload() {
   // Google Sheets: "https://docs.google.com/spreadsheets/d/1CMoU4tmcJLsw5-4aX-zFGTrj4klCg5fMoHkJ6RnwvZE/edit?usp=sharing"
 
   let url = [];
-  tableName[0]="past earth";
+
+  tableName[0]="geologic time";
   showTable[0]=true;
-  url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
+  url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1415895311&single=true&output=csv";
 
 
-  tableName[1]="future earth";
-  showTable[1] = true;
-  url[1] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
+  tableName[1]="past earth";
+  showTable[1]=true;
+  url[1]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
 
 
-  tableName[2]="future";
-  showTable[2]=true;
-  url[2]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=142672475&single=true&output=csv";
-  tableName[3]="geologic time";
+  tableName[2]="future earth";
+  showTable[2] = true;
+  url[2] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
+
+
+  tableName[3]="future";
   showTable[3]=true;
-  url[3]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1415895311&single=true&output=csv";
+  url[3]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=142672475&single=true&output=csv";
+
   tableName[4]="inventions";
   showTable[4]=true;
   url[4]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=592605780&single=true&output=csv";
@@ -99,15 +103,17 @@ function preload() {
   tableName[7]="waves";
   showTable[7]=true;
   url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=844114706&single=true&output=csv";
+  tableName[8]="clocks";
+  showTable[8]=true;
+  url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1789005610&single=true&output=csv";
 
-
-  tableName[8]="glacial cycles";
-  showTable[8] = true;
-  url[8] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
-
-  tableName[9]="global temperature";
+  tableName[9]="glacial cycles";
   showTable[9] = true;
-  url[9] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
+  url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+
+  tableName[10]="global temperature";
+  showTable[10] = true;
+  url[10] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
 
 
 
@@ -181,7 +187,7 @@ function draw() {
   }
 
 
-  if (magnitude<7 || magnitude>19) {
+  if (magnitude<7 || magnitude>19 || showTable[0]===false) {
     showSeconds=true;
   } else {
     showSeconds=false;
@@ -557,8 +563,8 @@ function draw() {
   if (zoom<0 ||
     (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===false) ||
-    (mouseIsPressed && dragStart<0 && mouseX>nowAxis && imgSel===true) ||
-    (mouseIsPressed && dragStart>0 && mouseX<nowAxis && imgSel===true)) {
+    (mouseIsPressed && dragStart<0 && mouseX>nowAxis-imageW/3 && imgSel===true) ||
+    (mouseIsPressed && dragStart>0 && mouseX<nowAxis+imageW/3 && imgSel===true)) {
     if (dragStart<0 && imgSelID>=0) {
       movibleX[imgSelID] += (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
     }
@@ -571,8 +577,8 @@ function draw() {
   if (zoom>0  ||
     (mouseIsPressed && dragStart>0 && mouseX<=0 && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX>=width && imgSel===false) ||
-    (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===true) ||
-    (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===true)) {
+    (mouseIsPressed && dragStart<0 && mouseX<=imageW/3 && imgSel===true) ||
+    (mouseIsPressed && dragStart>0 && mouseX>=width-imageW/3 && imgSel===true)) {
     scrollValue+=(scrollValue/50);
 
     if (dragStart<0 && imgSelID>=0) {
@@ -1326,6 +1332,7 @@ function Axis() {
 
 
 function timeScroll() {
+  textSize(textS);
   let  h = yearY*2;
   let l = [];
   l = [0.001, 1, 60, 3600, 86400, 31556952];
@@ -1543,7 +1550,7 @@ function timeScroll() {
 
 
 function seconds() {
-
+  textSize(textS);
   stroke(255);
   strokeWeight(lineW);
   textAlign(CENTER, CENTER);
@@ -1668,6 +1675,7 @@ function seconds() {
 }
 
 function years() {
+  textSize(textS);
   thisYear=year();
   let shift=10;
   yearMagnitude=0;
@@ -2032,24 +2040,6 @@ function keyPressed() {
 }
 
 
-function windowResized() {
-  var pW=document.getElementById("program").offsetWidth;
-  var pH=document.getElementById("program").offsetHeight;
-
-  pW = document.body.clientWidth;
-  pH = windowHeight*3/4;
-  //pH = windowHeight;
-  //print("width: "+pW+"  WindowW: "+width);
-  //print("height: "+pH+"  WindowH: "+height);
-  //resizeCanvas(windowWidth*2/3, windowHeight*2/3);
-  resizeCanvas(pW, pH);
-  imageW=height/5;
-  if (imageW<=0) {
-    imageW=1;
-  }
-  nowAxis=width/2;
-}
-
 
 function mouseClicked() {
   if (txtSource!="" && txtSourceSelected && txtClicked) {
@@ -2063,4 +2053,20 @@ function mouseClicked() {
   } else {
     txtClicked=false;
   }
+}
+
+function windowResized() {
+  var pW=document.getElementById("program").offsetWidth;
+  var pH=document.getElementById("program").offsetHeight;
+
+  pW = document.body.clientWidth;
+  pH = windowHeight*3/4;
+  //pH = windowHeight*4/5;
+  //pH = windowHeight;
+  resizeCanvas(pW, pH);
+  imageW=height/5;
+  if (imageW<=0) {
+    imageW=1;
+  }
+  nowAxis=width/2;
 }
