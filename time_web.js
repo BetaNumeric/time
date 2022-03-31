@@ -2060,8 +2060,8 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  pH = windowHeight*3/4;
-  //pH = windowHeight*4/5;
+  //pH = windowHeight*3/4;
+  pH = windowHeight*4/5;
   //pH = windowHeight;
   resizeCanvas(pW, pH);
   imageW=height/5;
