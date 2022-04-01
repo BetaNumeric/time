@@ -72,19 +72,18 @@ function preload() {
 
   let url = [];
 
+
   tableName[0]="geologic time";
   showTable[0]=true;
   url[0]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1415895311&single=true&output=csv";
 
-
-  tableName[1]="past earth";
+  tableName[1]="waves";
   showTable[1]=true;
-  url[1]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
+  url[1]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=844114706&single=true&output=csv";
 
-
-  tableName[2]="future earth";
-  showTable[2] = true;
-  url[2] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
+  tableName[2]="time spans";
+  showTable[2]=true;
+  url[2]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
 
 
   tableName[3]="future";
@@ -94,26 +93,36 @@ function preload() {
   tableName[4]="inventions";
   showTable[4]=true;
   url[4]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=592605780&single=true&output=csv";
+
   tableName[5]="life";
   showTable[5]=true;
   url[5]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=0&single=true&output=csv";
-  tableName[6]="time spans";
-  showTable[6]=true;
-  url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
-  tableName[7]="waves";
-  showTable[7]=true;
-  url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=844114706&single=true&output=csv";
-  tableName[8]="clocks";
+
+  tableName[6]="clocks";
+  showTable[6]=false;
+  url[6]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1789005610&single=true&output=csv";
+
+  tableName[7]="scientific discoveries";
+  showTable[7]=false;
+  url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1475554814&single=true&output=csv";
+
+
+  tableName[8]="past earth";
   showTable[8]=true;
-  url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1789005610&single=true&output=csv";
+  url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
 
-  tableName[9]="glacial cycles";
+
+  tableName[9]="future earth";
   showTable[9] = true;
-  url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+  url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
 
-  tableName[10]="global temperature";
+  tableName[10]="glacial cycles";
   showTable[10] = true;
-  url[10] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
+  url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+
+  tableName[11]="global temperature";
+  showTable[11] = true;
+  url[11] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
 
 
 
@@ -843,17 +852,31 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     (end>-width*2 && start<nowAxis-1))) {
     //for time points and time spans at the bottom half of the window
 
-    let r=10, rL=r, rR=r, h1=height/4;
+    let r=10, rL=r, rR=r, h1=height/4, minH=height/7, extraH=textS+margin*4;
 
     if (img!=undefined) {
       h1=height/7;
     }
-    if (img==undefined && id2%2==0) {
-      h1=height/4+height/12;
+    if (img==undefined) {
+      if (id2%2==0) {
+        h1=height/4+height/12;
+        //h1=minH+extraH;
+      }
+      if (id2%3==0) {
+        h1=height/4+height/6;
+        //h1=minH+extraH*2;
+      }
+      if (id2%4==0) {
+        h1=height/4-height/12;
+        //h1=height/4+height/3;
+        //h1=minH+extraH*3;
+      }
+      if (id2%5==0) {
+        //h1=height/4+height/3;
+        //h1=minH+extraH*4;
+      }
     }
-    if (img==undefined && id2%3==0) {
-      h1=height/4+height/6;
-    }
+
     x=start;
 
     if (u === "ad") {
@@ -1262,13 +1285,17 @@ function Axis() {
   strokeWeight(lineW/2);
   if (stopTime) {
     nowH=textS*2.5;
-    rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height+lineW*2);
+    if (nowLineW>0) {
+      //rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height+lineW*2);
+    } else {
+      rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height+lineW*2);
+    }
   } else {
     nowH=textS*4;
     if (nowLineW>0) {
-      rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height);
+      //rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height);
     } else {
-      //rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height-secY*2-textS*3);
+      rect(nowX+map(nowLineW, 0, nowW, 0, nowXoffset), height/2, nowLineW, height-secY*2-textS*3);
       if (showSeconds) {
         line(nowX, secY+textS+textS/3, nowX, height-secY-textS-textS/2);
       } else {
@@ -1303,7 +1330,9 @@ function Axis() {
       stroke(255);
       strokeWeight(lineW);
       if (showTable[i]) {
-        fill(0, 50, 0);
+        let mode=0;
+        mode = data[i].get(0, "mode");
+        fill(0, 50, 100);
       } else {
         fill(50, 0, 0);
       }
@@ -2060,8 +2089,8 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  //pH = windowHeight*3/4;
-  pH = windowHeight*4/5;
+  pH = windowHeight*3/4;
+  //pH = windowHeight*4/5;
   //pH = windowHeight;
   resizeCanvas(pW, pH);
   imageW=height/5;
