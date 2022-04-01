@@ -569,11 +569,11 @@ function draw() {
     txtBoxScale=0;
   }
 
-  if (zoom<0 ||
+  if (mouseY>0 && mouseY<height && (zoom<0 ||
     (mouseIsPressed && dragStart>0 && mouseX>=width && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX<=0 && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX>nowAxis-imageW/3 && imgSel===true) ||
-    (mouseIsPressed && dragStart>0 && mouseX<nowAxis+imageW/3 && imgSel===true)) {
+    (mouseIsPressed && dragStart>0 && mouseX<nowAxis+imageW/3 && imgSel===true))) {
     if (dragStart<0 && imgSelID>=0) {
       movibleX[imgSelID] += (25)*(scrollValue/skip*3.1556952)*pow(10, (magnitude-8-imgMag[imgSelID]));
     }
@@ -583,11 +583,11 @@ function draw() {
     scrollValue-=(scrollValue/50);
   }
 
-  if (zoom>0  ||
+  if (mouseY>0 && mouseY<height && (zoom>0  ||
     (mouseIsPressed && dragStart>0 && mouseX<=0 && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX>=width && imgSel===false) ||
     (mouseIsPressed && dragStart<0 && mouseX<=imageW/3 && imgSel===true) ||
-    (mouseIsPressed && dragStart>0 && mouseX>=width-imageW/3 && imgSel===true)) {
+    (mouseIsPressed && dragStart>0 && mouseX>=width-imageW/3 && imgSel===true))) {
     scrollValue+=(scrollValue/50);
 
     if (dragStart<0 && imgSelID>=0) {
@@ -1176,7 +1176,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
 function cursorTime() {
-  if ((mouseY<lineH+textS*2 || mouseY>height-lineH-textS*2) && abs(mouseX-nowAxis)>nowLineW/2) {
+  if (mouseY>0 && mouseY<height && (mouseY<lineH+textS*2 || mouseY>height-lineH-textS*2) && abs(mouseX-nowAxis)>nowLineW/2) {
     let mouseTime="";
     if (mouseY>height-lineH-textS*2 ) {
       if (magnitude>8 && magnitude<23) {
@@ -1191,17 +1191,22 @@ function cursorTime() {
         mouseTime=nfc((mouseX-nowAxis)*scrollValue/skip, 3)+"×10"+powerOf(magnitude)+"s";
       }
     }
+
+    let x=mouseX, y=height/2;
     noStroke();
+    rectMode(CENTER);
+    fill(0);
+    rect(x, y, textWidth(mouseTime)+5, textS+5, 5);
     fill(255, 100);
     textAlign(CENTER);
     textSize(textS);
     if (mouseX<=textWidth(mouseTime)/2) {
-      text(mouseTime, textWidth(mouseTime)/2, height/2);
+      x=textWidth(mouseTime)/2;
     } else if (mouseX>=width-textWidth(mouseTime)/2) {
-      text(mouseTime, width-textWidth(mouseTime)/2, height/2);
-    } else {
-      text(mouseTime, mouseX, height/2);
+      x=width-textWidth(mouseTime)/2;
     }
+    text(mouseTime, x, y);
+
     stroke(255, 100);
     strokeWeight(1);
     line(mouseX, height/2-(secY/textS)*6, mouseX, 0);
@@ -2089,9 +2094,9 @@ function windowResized() {
   var pH=document.getElementById("program").offsetHeight;
 
   pW = document.body.clientWidth;
-  //pH = windowHeight*3/4;
+  pH = windowHeight*3/4;
   //pH = windowHeight*4/5;
-  pH = windowHeight-1;
+  //pH = windowHeight-1;
   resizeCanvas(pW, pH);
   imageW=height/5;
   if (imageW<=0) {
