@@ -116,9 +116,9 @@ function preload() {
   showTable[9] = true;
   url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
 
-  //tableName[10]="glacial cycles";
-  //showTable[10] = true;
-  //url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+  tableName[10]="glacial cycles";
+  showTable[10] = true;
+  url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
 
   tableName[11]="global temperature";
   showTable[11] = true;
@@ -768,7 +768,7 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
   }
 
 
-  if (mode==0 && w>0.1) {
+  if (mode==0 && w>1) {
     //for the time length of events at the lower half of the top half of the window
     let h1=height/4, y1=height/2;
     let ts=textS, r=0, rL=0, rR=0;
@@ -788,14 +788,26 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
     textAlign(LEFT, CENTER);
 
     if (w<width/2) {
-      h=map(w, width/2, nowW-lineW, h1, nowH);
+      if (w>nowW-lineW) {
+        h=map(w, width/2, nowW-lineW, h1, nowH);
+      } else {
+        h=map(w, nowW-lineW, 0, nowH, 0);
+      }
 
-      rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      if (w>nowW-lineW) {
+        rL=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      } else {
+        rL=abs((nowW-nowLineW)/7);
+      }
       r=rL;
       if (nowAxis<x-w/2+rL) {
         rL=nowAxis-x+w/2;
       }
-      rR=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      if (w>nowW-lineW) {
+        rR=map(w, width/2, nowW-lineW, 0, abs((nowW-nowLineW)/7));
+      } else {
+        rR=abs((nowW-nowLineW)/7);
+      }
       if (nowAxis>x+w/2-rL) {
         rR=x+w/2-nowAxis;
       }
@@ -1318,11 +1330,14 @@ function Axis() {
   }
   rectMode(CORNER);
 
+
+
   rect(nowX-nowW/2+nowXoffset, nowY-nowH/2, nowW, nowH, nowRl, nowRr, nowRr, nowRl);
 
   fill(255);
   strokeWeight(textW);
   text(nowTxt, nowX-nowW/2+textS*3/4+nowXoffset, nowY);
+
 
 
   textAlign(CENTER, CENTER);
@@ -2096,7 +2111,7 @@ function windowResized() {
   pW = document.body.clientWidth;
   pH = windowHeight*3/4;
   //pH = windowHeight*4/5;
-  pH = windowHeight-1;
+  //pH = windowHeight-1;
   resizeCanvas(pW, pH);
   imageW=height/5;
   if (imageW<=0) {
