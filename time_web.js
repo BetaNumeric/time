@@ -111,17 +111,17 @@ function preload() {
   showTable[8]=true;
   url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
 
-  //tableName[9]="future earth";
-  //showTable[9] = true;
-  //url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
+  tableName[9]="future earth";
+  showTable[9] = true;
+  url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
 
-  //tableName[10]="glacial cycles";
-  //showTable[10] = false;
-  //url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+  tableName[10]="glacial cycles";
+  showTable[10] = false;
+  url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
 
-  //tableName[11]="global temperature";
-  //showTable[11] = false;
-  //url[11] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
+  tableName[11]="global temperature";
+  showTable[11] = false;
+  url[11] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
 
 
 
@@ -2110,7 +2110,7 @@ function windowResized() {
   pW = document.body.clientWidth;
   pH = windowHeight*3/4;
   //pH = windowHeight*4/5;
-  //pH = windowHeight-1;
+  pH = windowHeight-1;
   resizeCanvas(pW, pH);
   imageW=height/5;
   if (imageW<=0) {
