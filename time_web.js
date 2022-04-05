@@ -2111,7 +2111,7 @@ function windowResized() {
   pW = document.body.clientWidth;
   pH = windowHeight*3/4;
   //pH = windowHeight*4/5;
-  //pH = windowHeight-1;
+  pH = windowHeight-1;
   resizeCanvas(pW, pH);
   imageW=height/5;
   if (imageW<=0) {
