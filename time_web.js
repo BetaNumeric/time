@@ -417,7 +417,7 @@ function draw() {
       }
       if (data[pTxtId[0]].columns[k] === "text") {
         txt = "\n"+data[pTxtId[0]].getString(pTxtId[1], "text")+"\n";
-        if (data[pTxtId[0]].get(pTxtId[1], "mode")==4) {
+        if (data[pTxtId[0]].get(pTxtId[1], "mode")==4 && data[pTxtId[0]].getString(1, "text")==="") {
           txt = "\n"+data[pTxtId[0]].getString(0, "text")+"\n";
         }
       }
