@@ -145,10 +145,10 @@ function loadFiles() {
     prefixL[i] = [];
   }
 
-  prefixS[0] = ["", "m", "µ", "n", "p", "f", "a", "z", "y"];
-  prefixS[1] = ["", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yocto"];
-  prefixL[0] = ["", "k", "M", "G", "T", "P", "E", "Z", "Y"];
-  prefixL[1] = ["", "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta"];
+  prefixS[0] = ["", "m", "µ", "n", "p", "f", "a", "z", "y", "r", "q"];
+  prefixS[1] = ["", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yocto", "ronto", "quecto"];
+  prefixL[0] = ["", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"];
+  prefixL[1] = ["", "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta", "ronna", "quetta"];
 
 
   for (let i=0; i<data.length; i++) {
