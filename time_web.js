@@ -106,7 +106,7 @@ function preload() {
   url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1475554814&single=true&output=csv";
 
   tableName[8]="people";
-  showTable[8]=true;
+  showTable[8]=false;
   url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=114180383&single=true&output=csv";
 
   tableName[9]="past earth";
