@@ -85,7 +85,6 @@ function preload() {
   showTable[2]=true;
   url[2]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1873062094&single=true&output=csv";
 
-
   tableName[3]="future";
   showTable[3]=true;
   url[3]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=142672475&single=true&output=csv";
@@ -106,23 +105,25 @@ function preload() {
   showTable[7]=false;
   url[7]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1475554814&single=true&output=csv";
 
-
-  tableName[8]="past earth";
+  tableName[8]="people";
   showTable[8]=true;
-  url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
+  url[8]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=114180383&single=true&output=csv";
 
+  tableName[9]="past earth";
+  showTable[9]=true;
+  url[9]="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=107754275&single=true&output=csv";
 
-  tableName[9]="future earth";
-  showTable[9] = true;
-  url[9] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
-
-  tableName[10]="glacial cycles";
+  tableName[10]="future earth";
   showTable[10] = true;
-  url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+  url[10] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=273116154&single=true&output=csv";
 
-  tableName[11]="global temperature";
+  tableName[11]="glacial cycles";
   showTable[11] = true;
-  url[11] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
+  url[11] = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=553210598&single=true&output=csv";
+
+  tableName[12]="global temperature";
+  showTable[12] = true;
+  url[12] ="https://docs.google.com/spreadsheets/d/e/2PACX-1vSS4uMoj18ERhKiHm_puoNYRv7bHcStcYyTlNmO4w5vEXJFnpZqtftMwsgUw6LWyWIWFYZRCPuOIHj3/pub?gid=1522153598&single=true&output=csv";
 
 
 
@@ -917,13 +918,18 @@ function dataVis(i, j, id2, n, l, lx, u, mag, mode, order, t, c, img) {
 
 
 
-    strokeWeight(1);
-    noFill();
+    if (txtId[0]===i && txtId[1]===j) {
+      strokeWeight(2);
+      fill(255,55);
+    } else {
+      strokeWeight(1);
+      noFill();
+    }
 
     if (start!=end) {
-      rect(x, height-lineH*2, end-start, h*2, 50);
+      rect(x, height-lineH*1.5-h/8, end-start, h*2, 50);
       x=start+abs(start-end)/2;
-      line(x, height-lineH*2, x, height-h);
+      line(x, height-lineH*1.5-h/8, x, height-h);
     } else {
       line(x, height, x, height-h);
     }
