@@ -127,8 +127,22 @@ function preload() {
 
 
 
-  for (let i=0; i<url.length; i++) {
-    data[i] = loadTable(url[i], 'csv', 'header');
+  //for (let i=0; i<url.length; i++) {
+  for (let i = 0; i < url.length; i++) {
+    console.log(`Loading table from URL: ${url[i]}`); // This will show you what URL is being loaded
+    if (url[i]) { // Check if the URL is not undefined
+        data[i] = loadTable(url[i], 'csv', 'header', () => {
+            console.log(`Loaded data from ${url[i]}`);
+        }, (error) => {
+            console.error(`Failed to load data from ${url[i]}: `, error);
+        });
+    } else {
+        console.error(`URL at index ${i} is undefined.`);
+    }
+
+   
+    
+    //data[i] = loadTable(url[i], 'csv', 'header');
     imgList[i] = [];
     imgSelected[i]=false;
     imgMag[i]=0;
